@@ -1,5 +1,7 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, forwardRef, useImperativeHandle } from 'react';
 import { VoiceButton } from './VoiceButton';
+import { TranscriptConfirmation } from './TranscriptConfirmation';
+import { LanguageSelector } from './LanguageSelector';
 import { useSpeechRecognition } from '../hooks/useSpeechRecognition';
 import '../styles/PromptBox.css';
 
@@ -8,8 +10,15 @@ interface PromptBoxProps {
   isVisible: boolean;
 }
 
-export function PromptBox({ onSubmit, isVisible }: PromptBoxProps) {
+export interface PromptBoxRef {
+  focusInput: () => void;
+}
+
+export const PromptBox = forwardRef<PromptBoxRef, PromptBoxProps>(
+  function PromptBox({ onSubmit, isVisible }, ref) {
   const [query, setQuery] = useState('');
+  const [showConfirmation, setShowConfirmation] = useState(false);
+  const [pendingTranscript, setPendingTranscript] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
   
   const {
@@ -18,8 +27,17 @@ export function PromptBox({ onSubmit, isVisible }: PromptBoxProps) {
     startListening,
     stopListening,
     isSupported,
-    error: voiceError
+    error: voiceError,
+    language,
+    setLanguage
   } = useSpeechRecognition();
+
+  // Exponer el método focusInput al componente padre
+  useImperativeHandle(ref, () => ({
+    focusInput: () => {
+      inputRef.current?.focus();
+    }
+  }));
 
   useEffect(() => {
     if (isVisible && inputRef.current) {
@@ -30,19 +48,13 @@ export function PromptBox({ onSubmit, isVisible }: PromptBoxProps) {
     }
   }, [isVisible]);
 
-  // Cuando se recibe un transcript de voz, actualizar el input
+  // Cuando se recibe un transcript de voz, mostrar confirmación
   useEffect(() => {
-    if (transcript) {
-      setQuery(transcript);
-      // Auto-enviar después de recibir el transcript
-      setTimeout(() => {
-        if (transcript.trim()) {
-          onSubmit(transcript.trim());
-          setQuery('');
-        }
-      }, 500);
+    if (transcript && transcript.trim()) {
+      setPendingTranscript(transcript);
+      setShowConfirmation(true);
     }
-  }, [transcript, onSubmit]);
+  }, [transcript]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -52,13 +64,37 @@ export function PromptBox({ onSubmit, isVisible }: PromptBoxProps) {
     }
   };
 
+  const handleConfirmTranscript = (text: string) => {
+    setShowConfirmation(false);
+    onSubmit(text.trim());
+    setPendingTranscript('');
+  };
+
+  const handleCancelTranscript = () => {
+    setShowConfirmation(false);
+    setPendingTranscript('');
+  };
+
   if (!isVisible) return null;
 
   return (
     <div className="prompt-box">
-      <form onSubmit={handleSubmit} className="prompt-form">
+      {isSupported && (
+        <div className="prompt-controls">
+          <LanguageSelector
+            currentLanguage={language}
+            onLanguageChange={setLanguage}
+          />
+        </div>
+      )}
+
+      <form onSubmit={handleSubmit} className="prompt-form" role="search">
         <div className="prompt-input-wrapper">
+          <label htmlFor="search-input" className="sr-only">
+            Buscar proyectos
+          </label>
           <input
+            id="search-input"
             ref={inputRef}
             type="text"
             value={query}
@@ -66,6 +102,9 @@ export function PromptBox({ onSubmit, isVisible }: PromptBoxProps) {
             placeholder={isListening ? "Escuchando..." : "Escribe o habla para buscar proyectos…"}
             className="prompt-input"
             disabled={isListening}
+            aria-label="Campo de búsqueda de proyectos"
+            aria-describedby={voiceError ? "voice-error" : undefined}
+            aria-live={isListening ? "polite" : undefined}
           />
           
           <VoiceButton
@@ -78,16 +117,24 @@ export function PromptBox({ onSubmit, isVisible }: PromptBoxProps) {
       </form>
       
       {voiceError && (
-        <div className="voice-error">
+        <div className="voice-error" role="alert" id="voice-error" aria-live="assertive">
           <p>{voiceError}</p>
         </div>
       )}
       
       {isListening && (
-        <div className="voice-hint">
+        <div className="voice-hint" role="status" aria-live="polite">
           <p>🎤 Habla ahora...</p>
         </div>
       )}
+
+      {showConfirmation && (
+        <TranscriptConfirmation
+          transcript={pendingTranscript}
+          onConfirm={handleConfirmTranscript}
+          onCancel={handleCancelTranscript}
+        />
+      )}
     </div>
   );
-}
+});

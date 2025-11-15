@@ -9,6 +9,13 @@
   animation: slideDown 0.5s ease;
 }
 
+.prompt-controls {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 1rem;
+  animation: fadeIn 0.5s ease;
+}
+
 .prompt-form {
   width: 100%;
 }

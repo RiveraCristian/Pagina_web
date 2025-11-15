@@ -1,0 +1,99 @@
+/* Focus styles for keyboard navigation */
+
+/* Global focus visible styles */
+*:focus-visible {
+  outline: 2px solid var(--accent-color);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Remove default outline for mouse users */
+*:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* Button focus */
+button:focus-visible {
+  outline: 2px solid var(--accent-color);
+  outline-offset: 3px;
+  box-shadow: 0 0 0 4px rgba(0, 255, 136, 0.2);
+}
+
+/* Input focus */
+input:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid var(--accent-color);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px rgba(0, 255, 136, 0.1);
+}
+
+/* Link focus */
+a:focus-visible {
+  outline: 2px solid var(--accent-color);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* Card focus */
+.scene-card:focus-visible {
+  outline: 3px solid var(--accent-color);
+  outline-offset: 4px;
+  transform: translateY(-2px);
+}
+
+/* Skip to content link (for screen readers) */
+.skip-link {
+  position: fixed;
+  top: -100px;
+  left: 0;
+  background: var(--accent-color);
+  color: #000;
+  padding: 8px 16px;
+  text-decoration: none;
+  font-weight: 600;
+  z-index: 9999;
+  transition: top 0.3s;
+}
+
+.skip-link:focus {
+  top: 0;
+}
+
+/* Focus trap for modals */
+.modal-open {
+  overflow: hidden;
+}
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.8);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-content:focus {
+  outline: none;
+}
+
+/* Tab order indicators (development only) */
+[tabindex]:not([tabindex="-1"]) {
+  position: relative;
+}
+
+/* High contrast focus for accessibility */
+@media (prefers-contrast: high) {
+  *:focus-visible {
+    outline: 3px solid currentColor;
+    outline-offset: 3px;
+  }
+}
+
+/* Reduced motion for focus animations */
+@media (prefers-reduced-motion: reduce) {
+  *:focus-visible {
+    transition: none;
+  }
+}

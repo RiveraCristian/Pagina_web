@@ -6,6 +6,35 @@ export interface Project {
   nombre: string;
   fraseDefault: string;
   imagenes: string[];       // rutas relativas a /public/img/...
+  // Nuevos campos para mejora #21
+  tecnologias?: string[];   // ej: ["React", "TypeScript", "Node.js"]
+  duracion?: string;        // ej: "3 meses", "1 año"
+  equipo?: string[];        // ej: ["Juan Pérez", "María González"]
+  links?: {
+    demo?: string;
+    repositorio?: string;
+    documentacion?: string;
+    website?: string;
+  };
+  // Mejora #22: Galería múltiple
+  galeria?: string[];       // Imágenes adicionales para carousel
+  // Mejora #23: Video
+  videoUrl?: string;        // URL de YouTube/Vimeo
+  // Mejora #24: Testimonios
+  testimonios?: {
+    autor: string;
+    cargo?: string;
+    texto: string;
+    avatar?: string;
+  }[];
+  estadisticas?: {
+    usuarios?: number;
+    proyectos?: number;
+    satisfaccion?: number;  // 0-100
+  };
+  // Mejora #26: Categorización detallada
+  tags?: string[];          // ej: ["Web", "Mobile", "IA", "Dashboard"]
+  subcategoria?: string;    // ej: "Gestión Académica", "Analytics"
 }
 
 export interface SceneProject {
@@ -24,6 +53,30 @@ export interface ResolvedSceneProject {
   nombre: string;
   frase: string;
   imagenes: string[];
+  tecnologias?: string[];
+  duracion?: string;
+  equipo?: string[];
+  links?: {
+    demo?: string;
+    repositorio?: string;
+    documentacion?: string;
+    website?: string;
+  };
+  galeria?: string[];
+  videoUrl?: string;
+  testimonios?: {
+    autor: string;
+    cargo?: string;
+    texto: string;
+    avatar?: string;
+  }[];
+  estadisticas?: {
+    usuarios?: number;
+    proyectos?: number;
+    satisfaccion?: number;
+  };
+  tags?: string[];
+  subcategoria?: string;
 }
 
 export interface SceneResponseWithResolvedProjects {

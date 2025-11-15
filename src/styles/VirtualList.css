@@ -1,0 +1,31 @@
+.virtual-list-container {
+  overflow-y: auto;
+  overflow-x: hidden;
+  position: relative;
+  will-change: scroll-position;
+  -webkit-overflow-scrolling: touch;
+}
+
+.virtual-list-container::-webkit-scrollbar {
+  width: 8px;
+}
+
+.virtual-list-container::-webkit-scrollbar-track {
+  background: var(--bg-secondary);
+  border-radius: 4px;
+}
+
+.virtual-list-container::-webkit-scrollbar-thumb {
+  background: var(--accent-color);
+  border-radius: 4px;
+}
+
+.virtual-list-container::-webkit-scrollbar-thumb:hover {
+  background: var(--accent-hover);
+}
+
+/* Firefox scrollbar */
+.virtual-list-container {
+  scrollbar-width: thin;
+  scrollbar-color: var(--accent-color) var(--bg-secondary);
+}

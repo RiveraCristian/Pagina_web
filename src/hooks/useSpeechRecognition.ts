@@ -7,6 +7,8 @@ interface UseSpeechRecognitionReturn {
   stopListening: () => void;
   isSupported: boolean;
   error: string | null;
+  language: string;
+  setLanguage: (lang: string) => void;
 }
 
 export function useSpeechRecognition(): UseSpeechRecognitionReturn {
@@ -14,6 +16,13 @@ export function useSpeechRecognition(): UseSpeechRecognitionReturn {
   const [transcript, setTranscript] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [recognition, setRecognition] = useState<SpeechRecognition | null>(null);
+  const [language, setLanguage] = useState<string>(() => {
+    // Detectar idioma del navegador
+    const browserLang = navigator.language || 'es-ES';
+    if (browserLang.startsWith('en')) return 'en-US';
+    if (browserLang.startsWith('pt')) return 'pt-BR';
+    return 'es-ES';
+  });
 
   // Verificar si el navegador soporta Web Speech API
   const isSupported = typeof window !== 'undefined' && 
@@ -34,13 +43,18 @@ export function useSpeechRecognition(): UseSpeechRecognitionReturn {
     // Configuración
     recognitionInstance.continuous = false;  // Se detiene automáticamente
     recognitionInstance.interimResults = false;  // Solo resultados finales
-    recognitionInstance.lang = 'es-ES';  // Español
+    recognitionInstance.lang = language;  // Idioma dinámico
 
     // Evento: resultado recibido
     recognitionInstance.onresult = (event: SpeechRecognitionEvent) => {
       const transcriptResult = event.results[0][0].transcript;
       setTranscript(transcriptResult);
       setIsListening(false);
+      
+      // Feedback háptico al recibir transcript (móviles)
+      if (navigator.vibrate) {
+        navigator.vibrate([30, 50, 30]); // Patrón de vibración
+      }
     };
 
     // Evento: error
@@ -71,7 +85,7 @@ export function useSpeechRecognition(): UseSpeechRecognitionReturn {
         recognitionInstance.stop();
       }
     };
-  }, [isSupported]);
+  }, [isSupported, language]);
 
   const startListening = () => {
     if (!recognition) return;
@@ -80,6 +94,11 @@ export function useSpeechRecognition(): UseSpeechRecognitionReturn {
     setTranscript('');
     
     try {
+      // Feedback háptico al iniciar (móviles)
+      if (navigator.vibrate) {
+        navigator.vibrate(50); // 50ms vibración
+      }
+      
       recognition.start();
       setIsListening(true);
     } catch (err) {
@@ -92,6 +111,11 @@ export function useSpeechRecognition(): UseSpeechRecognitionReturn {
     if (!recognition) return;
     
     try {
+      // Feedback háptico al detener (móviles)
+      if (navigator.vibrate) {
+        navigator.vibrate(30); // 30ms vibración corta
+      }
+      
       recognition.stop();
       setIsListening(false);
     } catch (err) {
@@ -105,6 +129,8 @@ export function useSpeechRecognition(): UseSpeechRecognitionReturn {
     startListening,
     stopListening,
     isSupported,
-    error
+    error,
+    language,
+    setLanguage
   };
 }
