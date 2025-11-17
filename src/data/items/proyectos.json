@@ -1,0 +1,94 @@
+{
+  "items": [
+    {
+      "id": "1763230098267_jb711l9",
+      "categoryId": "proyectos",
+      "status": "published",
+      "createdAt": "2025-11-15T18:08:18.267Z",
+      "updatedAt": "2025-11-15T18:08:18.267Z",
+      "data": {
+        "titulo": "Ciento01: Lógica de programación",
+        "descripcion": "Plataforma interactiva para aprender lógica de programación.",
+        "descripcionLarga": "Plataforma interactiva para aprender lógica de programación.",
+        "categoria": "educacion",
+        "imagen": "/img/proyectos/ciento01.png",
+        "enlace": "",
+        "github": "",
+        "tecnologias": "React, TypeScript, Node.js, PostgreSQL",
+        "destacado": false
+      }
+    },
+    {
+      "id": "1763230098267_mzp2rgz",
+      "categoryId": "proyectos",
+      "status": "published",
+      "createdAt": "2025-11-15T18:08:18.267Z",
+      "updatedAt": "2025-11-15T18:08:18.267Z",
+      "data": {
+        "titulo": "Observatorio de datos territoriales",
+        "descripcion": "Visualización de datos para decisiones regionales.",
+        "descripcionLarga": "Visualización de datos para decisiones regionales.",
+        "categoria": "sector_publico",
+        "imagen": "/img/proyectos/omed1.png",
+        "enlace": "",
+        "github": "",
+        "tecnologias": "Vue.js, D3.js, Python, FastAPI, MongoDB",
+        "destacado": false
+      }
+    },
+    {
+      "id": "1763230098268_fbpcaog",
+      "categoryId": "proyectos",
+      "status": "published",
+      "createdAt": "2025-11-15T18:08:18.268Z",
+      "updatedAt": "2025-11-15T18:08:18.268Z",
+      "data": {
+        "titulo": "Sistema de gestión educativa",
+        "descripcion": "Plataforma integral para colegios y centros educativos.",
+        "descripcionLarga": "Plataforma integral para colegios y centros educativos.",
+        "categoria": "educacion",
+        "imagen": "/img/proyectos/edu1.png",
+        "enlace": "",
+        "github": "",
+        "tecnologias": "Next.js, React, Prisma, PostgreSQL, AWS",
+        "destacado": false
+      }
+    },
+    {
+      "id": "1763230098268_i7coepi",
+      "categoryId": "proyectos",
+      "status": "published",
+      "createdAt": "2025-11-15T18:08:18.268Z",
+      "updatedAt": "2025-11-15T18:08:18.268Z",
+      "data": {
+        "titulo": "Dashboard de análisis empresarial",
+        "descripcion": "Visualización de KPIs y métricas de negocio en tiempo real.",
+        "descripcionLarga": "Visualización de KPIs y métricas de negocio en tiempo real.",
+        "categoria": "negocios",
+        "imagen": "/img/proyectos/analytics1.png",
+        "enlace": "",
+        "github": "",
+        "tecnologias": "React, Chart.js, GraphQL, Redis, Docker",
+        "destacado": false
+      }
+    },
+    {
+      "id": "1763230098268_z97l252",
+      "categoryId": "proyectos",
+      "status": "published",
+      "createdAt": "2025-11-15T18:08:18.268Z",
+      "updatedAt": "2025-11-15T18:08:18.268Z",
+      "data": {
+        "titulo": "Universidad del Desarrollo",
+        "descripcion": "Institución de educación superior comprometida con la excelencia académica y la innovación.",
+        "descripcionLarga": "Institución de educación superior comprometida con la excelencia académica y la innovación.",
+        "categoria": "institucional",
+        "imagen": "/img/proyectos/udd-campus.png",
+        "enlace": "",
+        "github": "",
+        "tecnologias": "Innovación, Educación, Investigación",
+        "destacado": false
+      }
+    }
+  ]
+}

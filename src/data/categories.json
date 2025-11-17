@@ -1,0 +1,112 @@
+{
+  "categories": [
+    {
+      "id": "proyectos",
+      "name": "Proyectos",
+      "slug": "proyectos",
+      "icon": "FaLightbulb",
+      "description": "Proyectos estudiantiles innovadores",
+      "itemsFile": "items/proyectos.json",
+      "searchWeight": 1.0,
+      "displayOrder": 1,
+      "fields": [
+        {
+          "id": "title",
+          "name": "title",
+          "label": "Título del Proyecto",
+          "type": "text",
+          "required": true,
+          "searchable": true,
+          "maxLength": 100,
+          "placeholder": "Ej: Sistema de Riego Inteligente",
+          "helpText": "Nombre corto y descriptivo del proyecto"
+        },
+        {
+          "id": "description",
+          "name": "description",
+          "label": "Descripción",
+          "type": "textarea",
+          "required": true,
+          "searchable": true,
+          "maxLength": 500,
+          "rows": 4,
+          "placeholder": "Describe el proyecto en detalle...",
+          "helpText": "Explica qué hace el proyecto y su propósito"
+        },
+        {
+          "id": "faculty",
+          "name": "faculty",
+          "label": "Facultad",
+          "type": "select",
+          "required": true,
+          "searchable": true,
+          "options": [
+            "Ingeniería",
+            "Diseño",
+            "Medicina",
+            "Arquitectura",
+            "Negocios",
+            "Comunicación",
+            "Derecho",
+            "Psicología"
+          ],
+          "helpText": "Facultad responsable del proyecto"
+        },
+        {
+          "id": "year",
+          "name": "year",
+          "label": "Año",
+          "type": "number",
+          "required": false,
+          "searchable": false,
+          "min": 2000,
+          "max": 2030,
+          "placeholder": "2024",
+          "helpText": "Año de realización del proyecto"
+        },
+        {
+          "id": "image",
+          "name": "image",
+          "label": "Imagen Principal",
+          "type": "image",
+          "required": false,
+          "searchable": false,
+          "accept": "image/*",
+          "maxSize": 5242880,
+          "helpText": "Imagen representativa (máx 5MB)"
+        },
+        {
+          "id": "keywords",
+          "name": "keywords",
+          "label": "Palabras Clave",
+          "type": "tags",
+          "required": true,
+          "searchable": true,
+          "maxTags": 10,
+          "placeholder": "Presiona Enter para agregar",
+          "helpText": "Tags para mejorar la búsqueda (ej: iot, web, mobile)"
+        },
+        {
+          "id": "url",
+          "name": "url",
+          "label": "Enlace Externo",
+          "type": "url",
+          "required": false,
+          "searchable": false,
+          "placeholder": "https://github.com/usuario/proyecto",
+          "helpText": "Link a GitHub, demo, documentación, etc."
+        },
+        {
+          "id": "featured",
+          "name": "featured",
+          "label": "Destacado",
+          "type": "boolean",
+          "required": false,
+          "searchable": false,
+          "default": false,
+          "helpText": "Marcar como proyecto destacado en la portada"
+        }
+      ]
+    }
+  ]
+}

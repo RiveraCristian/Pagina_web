@@ -3,12 +3,15 @@
 ## 🎯 Flujo de Usuario
 
 ### 1. Pantalla Inicial
+
 Al cargar la aplicación, verás:
+
 - Fondo negro completo
 - Logo "COLABI" centrado con subtítulo "Innovación Tecnológica"
 - Texto "Haz clic para comenzar" parpadeando suavemente
 
 ### 2. Activar el Input
+
 Haz clic en cualquier parte del logo y verás:
 - El input de texto aparece con animación suave debajo del logo
 - El cursor se posiciona automáticamente en el input

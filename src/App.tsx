@@ -4,6 +4,9 @@ import { PromptBox } from './components/PromptBox';
 import { ParticlesBackground } from './components/ParticlesBackground';
 import { SkipLink } from './components/SkipLink';
 import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
+import { useAppConfig } from './hooks/useAppConfig';
+import { useThemeConfig } from './hooks/useThemeConfig';
+import { useProjects } from './hooks/useProjects';
 import { sanitizeSearchQuery, detectXSSAttempt, checkRateLimit } from './utils/sanitize';
 import { cacheManager } from './utils/cache';
 
@@ -17,11 +20,14 @@ const KeyboardShortcutsHelp = lazy(() => import('./components/KeyboardShortcutsH
 const ThemeToggle = lazy(() => import('./components/ThemeToggle').then(module => ({ default: module.ThemeToggle })));
 const InstallPrompt = lazy(() => import('./components/InstallPrompt').then(module => ({ default: module.InstallPrompt })));
 import { getSceneForQuery } from './services/aiSceneService';
-import { PROJECTS } from './data/projects';
 import type { SceneResponseWithResolvedProjects, ResolvedSceneProject } from './types';
 import './App.css';
 
 function App() {
+  // Cargar configuración y datos desde JSON
+  const { config } = useAppConfig();
+  const { themeConfig } = useThemeConfig();
+  const { projects: PROJECTS } = useProjects();
   const [promptVisible, setPromptVisible] = useState(false);
   const [scene, setScene] = useState<SceneResponseWithResolvedProjects | null>(null);
   const [loading, setLoading] = useState(false);
@@ -29,6 +35,13 @@ function App() {
   const [searchHistory, setSearchHistory] = useState<Array<{ query: string; scene: SceneResponseWithResolvedProjects }>>([]);
   const [currentQuery, setCurrentQuery] = useState<string>('');
   const promptBoxRef = useRef<{ focusInput: () => void }>(null);
+
+  // Actualizar título del documento cuando se carga la config
+  useEffect(() => {
+    if (config?.seo?.title) {
+      document.title = config.seo.title;
+    }
+  }, [config]);
 
   // Keyboard shortcuts
   useKeyboardShortcuts({
@@ -212,13 +225,13 @@ function App() {
   return (
     <div className="app">
       <SkipLink />
-      <ParticlesBackground />
+      {themeConfig?.effects?.particles?.enabled && <ParticlesBackground />}
       
       <Suspense fallback={null}>
         {promptVisible && <BackToTopButton onClick={handleBackToTop} />}
         {promptVisible && <KeyboardShortcutsHelp />}
-        <ThemeToggle />
-        <InstallPrompt />
+        {config?.features?.darkMode && <ThemeToggle />}
+        {config?.features?.pwa && <InstallPrompt />}
       </Suspense>
       
       <LogoHero onClick={handleLogoClick} isCompact={promptVisible} />

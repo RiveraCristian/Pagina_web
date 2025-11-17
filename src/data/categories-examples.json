@@ -1,0 +1,473 @@
+{
+  "categories": [
+    {
+      "id": "quienes-somos",
+      "name": "Quiénes Somos",
+      "description": "Secciones de la página institucional",
+      "icon": "FaInfoCircle",
+      "fields": [
+        {
+          "id": "seccion",
+          "name": "Nombre de la Sección",
+          "type": "text",
+          "required": true,
+          "searchable": true,
+          "helpText": "Ej: Historia, Misión, Visión, Valores"
+        },
+        {
+          "id": "titulo",
+          "name": "Título Principal",
+          "type": "text",
+          "required": true,
+          "searchable": true,
+          "validation": {
+            "maxLength": 100
+          }
+        },
+        {
+          "id": "subtitulo",
+          "name": "Subtítulo",
+          "type": "text",
+          "searchable": false
+        },
+        {
+          "id": "contenido",
+          "name": "Contenido",
+          "type": "richtext",
+          "required": true,
+          "helpText": "Texto completo de la sección con formato"
+        },
+        {
+          "id": "imagen",
+          "name": "Imagen",
+          "type": "image",
+          "helpText": "Imagen representativa (opcional)"
+        },
+        {
+          "id": "icono",
+          "name": "Ícono",
+          "type": "text",
+          "placeholder": "FaHeart",
+          "helpText": "Nombre del ícono de Font Awesome"
+        },
+        {
+          "id": "orden",
+          "name": "Orden de Visualización",
+          "type": "number",
+          "required": true,
+          "validation": {
+            "min": 1
+          },
+          "helpText": "Número para ordenar las secciones (1, 2, 3...)"
+        },
+        {
+          "id": "color_fondo",
+          "name": "Color de Fondo",
+          "type": "color",
+          "helpText": "Color de fondo de la sección"
+        },
+        {
+          "id": "destacado",
+          "name": "Destacar esta Sección",
+          "type": "boolean",
+          "helpText": "Aparecerá en posición prominente"
+        },
+        {
+          "id": "mostrar_en_home",
+          "name": "Mostrar en Página Principal",
+          "type": "boolean"
+        }
+      ]
+    },
+    {
+      "id": "proyectos",
+      "name": "Proyectos",
+      "description": "Portfolio de proyectos y casos de éxito",
+      "icon": "FaProjectDiagram",
+      "fields": [
+        {
+          "id": "nombre",
+          "name": "Nombre del Proyecto",
+          "type": "text",
+          "required": true,
+          "searchable": true
+        },
+        {
+          "id": "slug",
+          "name": "URL Amigable",
+          "type": "slug",
+          "required": true,
+          "helpText": "Se generará automáticamente del nombre"
+        },
+        {
+          "id": "descripcion_corta",
+          "name": "Descripción Corta",
+          "type": "textarea",
+          "required": true,
+          "searchable": true,
+          "validation": {
+            "maxLength": 200
+          },
+          "helpText": "Resumen breve (máx 200 caracteres)"
+        },
+        {
+          "id": "descripcion_completa",
+          "name": "Descripción Completa",
+          "type": "richtext",
+          "required": true,
+          "helpText": "Descripción detallada del proyecto"
+        },
+        {
+          "id": "categoria",
+          "name": "Categoría",
+          "type": "select",
+          "required": true,
+          "validation": {
+            "options": "Web Development,Mobile App,E-commerce,Branding,Marketing Digital,Consultoría,Diseño UX/UI,Otro"
+          }
+        },
+        {
+          "id": "industria",
+          "name": "Industria/Sector",
+          "type": "select",
+          "validation": {
+            "options": "Tecnología,Educación,Salud,Finanzas,Retail,Gobierno,Inmobiliaria,Turismo,Manufactura,Servicios,Otro"
+          }
+        },
+        {
+          "id": "cliente",
+          "name": "Cliente",
+          "type": "text",
+          "helpText": "Nombre del cliente o empresa"
+        },
+        {
+          "id": "tecnologias",
+          "name": "Tecnologías Utilizadas",
+          "type": "tags",
+          "searchable": true,
+          "helpText": "Separar por comas. Ej: React, Node.js, MongoDB"
+        },
+        {
+          "id": "imagen_principal",
+          "name": "Imagen Principal",
+          "type": "image",
+          "required": true
+        },
+        {
+          "id": "galeria",
+          "name": "Galería de Imágenes",
+          "type": "textarea",
+          "helpText": "URLs de imágenes separadas por comas"
+        },
+        {
+          "id": "video_url",
+          "name": "URL de Video",
+          "type": "url",
+          "helpText": "Link de YouTube o Vimeo"
+        },
+        {
+          "id": "enlace_demo",
+          "name": "Link Demo/Sitio Web",
+          "type": "url"
+        },
+        {
+          "id": "enlace_github",
+          "name": "Repositorio GitHub",
+          "type": "url"
+        },
+        {
+          "id": "fecha_inicio",
+          "name": "Fecha de Inicio",
+          "type": "date"
+        },
+        {
+          "id": "fecha_fin",
+          "name": "Fecha de Finalización",
+          "type": "date"
+        },
+        {
+          "id": "duracion",
+          "name": "Duración (meses)",
+          "type": "number",
+          "validation": {
+            "min": 0
+          }
+        },
+        {
+          "id": "equipo_size",
+          "name": "Tamaño del Equipo",
+          "type": "number",
+          "validation": {
+            "min": 1
+          }
+        },
+        {
+          "id": "rol",
+          "name": "Tu Rol en el Proyecto",
+          "type": "text",
+          "helpText": "Ej: Lead Developer, Designer, Project Manager"
+        },
+        {
+          "id": "desafios",
+          "name": "Desafíos Principales",
+          "type": "textarea",
+          "helpText": "Problemas que se resolvieron"
+        },
+        {
+          "id": "resultados",
+          "name": "Resultados Obtenidos",
+          "type": "textarea",
+          "helpText": "Métricas, impacto, logros"
+        },
+        {
+          "id": "testimonio_cliente",
+          "name": "Testimonio del Cliente",
+          "type": "textarea"
+        },
+        {
+          "id": "destacado",
+          "name": "Proyecto Destacado",
+          "type": "boolean",
+          "helpText": "Aparecerá en la página principal"
+        },
+        {
+          "id": "color_tema",
+          "name": "Color del Tema",
+          "type": "color",
+          "helpText": "Color principal asociado al proyecto"
+        }
+      ]
+    },
+    {
+      "id": "iniciativas",
+      "name": "Iniciativas",
+      "description": "Iniciativas, programas y acciones especiales",
+      "icon": "FaLightbulb",
+      "fields": [
+        {
+          "id": "nombre",
+          "name": "Nombre de la Iniciativa",
+          "type": "text",
+          "required": true,
+          "searchable": true
+        },
+        {
+          "id": "descripcion",
+          "name": "Descripción",
+          "type": "richtext",
+          "required": true
+        },
+        {
+          "id": "tipo",
+          "name": "Tipo de Iniciativa",
+          "type": "select",
+          "validation": {
+            "options": "Social,Ambiental,Educativa,Tecnológica,Salud,Cultural,Deportiva,Otra"
+          }
+        },
+        {
+          "id": "objetivo",
+          "name": "Objetivo Principal",
+          "type": "textarea",
+          "required": true
+        },
+        {
+          "id": "beneficiarios",
+          "name": "Beneficiarios",
+          "type": "text",
+          "helpText": "Ej: 500 familias, 1000 estudiantes, comunidad local"
+        },
+        {
+          "id": "alcance",
+          "name": "Alcance Geográfico",
+          "type": "select",
+          "validation": {
+            "options": "Local,Regional,Nacional,Internacional"
+          }
+        },
+        {
+          "id": "estado",
+          "name": "Estado Actual",
+          "type": "select",
+          "required": true,
+          "validation": {
+            "options": "En Planificación,En Ejecución,Completada,Pausada,Cancelada"
+          }
+        },
+        {
+          "id": "fecha_inicio",
+          "name": "Fecha de Inicio",
+          "type": "date",
+          "required": true
+        },
+        {
+          "id": "fecha_fin",
+          "name": "Fecha de Finalización",
+          "type": "date"
+        },
+        {
+          "id": "imagen",
+          "name": "Imagen Principal",
+          "type": "image",
+          "required": true
+        },
+        {
+          "id": "impacto",
+          "name": "Impacto Logrado",
+          "type": "textarea",
+          "helpText": "Métricas, estadísticas y resultados"
+        },
+        {
+          "id": "aliados",
+          "name": "Aliados y Partners",
+          "type": "tags",
+          "helpText": "Organizaciones colaboradoras"
+        },
+        {
+          "id": "presupuesto",
+          "name": "Presupuesto",
+          "type": "text"
+        },
+        {
+          "id": "como_participar",
+          "name": "Cómo Participar",
+          "type": "textarea"
+        },
+        {
+          "id": "enlace_mas_info",
+          "name": "Enlace Más Información",
+          "type": "url"
+        },
+        {
+          "id": "destacado",
+          "name": "Iniciativa Destacada",
+          "type": "boolean"
+        }
+      ]
+    },
+    {
+      "id": "colaboradores",
+      "name": "Colaboradores",
+      "description": "Equipo de trabajo, colaboradores y miembros",
+      "icon": "FaUsers",
+      "fields": [
+        {
+          "id": "nombre_completo",
+          "name": "Nombre Completo",
+          "type": "text",
+          "required": true,
+          "searchable": true
+        },
+        {
+          "id": "cargo",
+          "name": "Cargo/Posición",
+          "type": "text",
+          "required": true,
+          "searchable": true
+        },
+        {
+          "id": "area",
+          "name": "Área/Departamento",
+          "type": "select",
+          "validation": {
+            "options": "Dirección,Desarrollo,Diseño,Marketing,Ventas,Administración,Operaciones,Recursos Humanos,Finanzas,Legal,Otro"
+          }
+        },
+        {
+          "id": "nivel",
+          "name": "Nivel Jerárquico",
+          "type": "select",
+          "validation": {
+            "options": "Dirección,Gerencia,Coordinación,Especialista,Analista,Asistente"
+          }
+        },
+        {
+          "id": "foto",
+          "name": "Foto de Perfil",
+          "type": "image",
+          "required": true,
+          "helpText": "Foto profesional cuadrada (512x512 recomendado)"
+        },
+        {
+          "id": "bio",
+          "name": "Biografía",
+          "type": "textarea",
+          "validation": {
+            "maxLength": 300
+          },
+          "helpText": "Biografía corta (máx 300 caracteres)"
+        },
+        {
+          "id": "especialidades",
+          "name": "Especialidades/Habilidades",
+          "type": "tags",
+          "helpText": "Separar por comas"
+        },
+        {
+          "id": "experiencia_anos",
+          "name": "Años de Experiencia",
+          "type": "number",
+          "validation": {
+            "min": 0
+          }
+        },
+        {
+          "id": "educacion",
+          "name": "Educación",
+          "type": "textarea"
+        },
+        {
+          "id": "email",
+          "name": "Email Corporativo",
+          "type": "email"
+        },
+        {
+          "id": "telefono",
+          "name": "Teléfono",
+          "type": "text"
+        },
+        {
+          "id": "linkedin",
+          "name": "LinkedIn",
+          "type": "url"
+        },
+        {
+          "id": "twitter",
+          "name": "Twitter/X",
+          "type": "url"
+        },
+        {
+          "id": "github",
+          "name": "GitHub",
+          "type": "url"
+        },
+        {
+          "id": "website",
+          "name": "Sitio Web Personal",
+          "type": "url"
+        },
+        {
+          "id": "fecha_ingreso",
+          "name": "Fecha de Ingreso",
+          "type": "date"
+        },
+        {
+          "id": "orden",
+          "name": "Orden de Visualización",
+          "type": "number",
+          "helpText": "Para ordenar en la página de equipo"
+        },
+        {
+          "id": "mostrar_en_home",
+          "name": "Mostrar en Página Principal",
+          "type": "boolean"
+        },
+        {
+          "id": "disponible_contacto",
+          "name": "Disponible para Contacto",
+          "type": "boolean"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,77 @@
+{
+  "mode": "dark",
+  "colors": {
+    "primary": "#00ff88",
+    "secondary": "#0d1b2a",
+    "background": "#000814",
+    "surface": "#1a1a2e",
+    "text": "#ffffff",
+    "textSecondary": "#a0a0a0",
+    "accent": "#00ff88",
+    "error": "#ff4444",
+    "success": "#00ff88",
+    "warning": "#ffaa00",
+    "info": "#3b82f6"
+  },
+  "typography": {
+    "fontFamily": "Inter, system-ui, -apple-system, sans-serif",
+    "headingFamily": "Poppins, sans-serif",
+    "fontSize": {
+      "xs": "0.75rem",
+      "sm": "0.875rem",
+      "base": "1rem",
+      "lg": "1.125rem",
+      "xl": "1.25rem",
+      "2xl": "1.5rem",
+      "3xl": "2rem",
+      "4xl": "3rem"
+    },
+    "fontWeight": {
+      "normal": "400",
+      "medium": "500",
+      "semibold": "600",
+      "bold": "700"
+    }
+  },
+  "spacing": {
+    "xs": "0.25rem",
+    "sm": "0.5rem",
+    "md": "1rem",
+    "lg": "1.5rem",
+    "xl": "2rem",
+    "2xl": "3rem",
+    "3xl": "4rem"
+  },
+  "borderRadius": {
+    "sm": "4px",
+    "md": "8px",
+    "lg": "12px",
+    "xl": "16px",
+    "full": "9999px"
+  },
+  "effects": {
+    "particles": {
+      "enabled": true,
+      "count": 100,
+      "color": "#00ff88",
+      "speed": 0.5,
+      "size": 2
+    },
+    "animations": {
+      "level": "medium",
+      "duration": "0.3s",
+      "easing": "cubic-bezier(0.4, 0, 0.2, 1)"
+    },
+    "blur": {
+      "enabled": false,
+      "amount": "10px"
+    }
+  },
+  "logo": {
+    "path": "/logo.svg",
+    "width": 200,
+    "height": 80,
+    "compactWidth": 50,
+    "compactHeight": 50
+  }
+}
