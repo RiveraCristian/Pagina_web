@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import { FaSave, FaTimes, FaSpinner } from 'react-icons/fa';
 import { FileManager } from '../utils/fileManager';
+import { ImageUpload } from '../components/ImageUpload';
 import type { FieldDefinition } from '@/types/schema';
 import '../styles/ItemForm.css';
 
@@ -38,7 +39,7 @@ export default function ItemForm() {
     ? { status: item.status, ...item.data }
     : { status: 'draft' as const };
 
-  const { register, handleSubmit, formState: { errors, isDirty } } = useForm<any>({
+  const { register, handleSubmit, control, formState: { errors, isDirty } } = useForm<any>({
     defaultValues,
     values: isEdit && item ? { status: item.status, ...item.data } : undefined,
   });
@@ -97,9 +98,9 @@ export default function ItemForm() {
               type={field.type}
               {...register(fieldName, {
                 required: field.required ? `${field.label} es requerido` : false,
-                maxLength: field.validation?.maxLength ? {
-                  value: field.validation.maxLength,
-                  message: `Máximo ${field.validation.maxLength} caracteres`
+                maxLength: field.maxLength ? {
+                  value: field.maxLength,
+                  message: `Máximo ${field.maxLength} caracteres`
                 } : undefined,
               })}
               placeholder={field.placeholder || field.helpText || ''}
@@ -121,9 +122,9 @@ export default function ItemForm() {
               rows={field.rows || 4}
               {...register(fieldName, {
                 required: field.required ? `${field.label} es requerido` : false,
-                maxLength: field.validation?.maxLength ? {
-                  value: field.validation.maxLength,
-                  message: `Máximo ${field.validation.maxLength} caracteres`
+                maxLength: field.maxLength ? {
+                  value: field.maxLength,
+                  message: `Máximo ${field.maxLength} caracteres`
                 } : undefined,
               })}
               placeholder={field.placeholder || field.helpText || ''}
@@ -144,18 +145,18 @@ export default function ItemForm() {
               id={fieldName}
               type="number"
               step={field.step || 1}
-              min={field.validation?.min}
-              max={field.validation?.max}
+              min={field.min}
+              max={field.max}
               {...register(fieldName, {
                 required: field.required ? `${field.label} es requerido` : false,
                 valueAsNumber: true,
-                min: field.validation?.min ? {
-                  value: field.validation.min,
-                  message: `Mínimo ${field.validation.min}`
+                min: field.min ? {
+                  value: field.min,
+                  message: `Mínimo ${field.min}`
                 } : undefined,
-                max: field.validation?.max ? {
-                  value: field.validation.max,
-                  message: `Máximo ${field.validation.max}`
+                max: field.max ? {
+                  value: field.max,
+                  message: `Máximo ${field.max}`
                 } : undefined,
               })}
               placeholder={field.placeholder || field.helpText || ''}
@@ -292,6 +293,33 @@ export default function ItemForm() {
         );
 
       case 'image':
+        return (
+          <div key={field.id} className="form-field full-width">
+            <label>
+              {field.label}
+              {field.required && <span className="required">*</span>}
+            </label>
+            <Controller
+              name={fieldName}
+              control={control}
+              rules={{
+                required: field.required ? `${field.label} es requerido` : false,
+              }}
+              render={({ field: { value, onChange } }: { field: { value: string; onChange: (value: string) => void } }) => (
+                <ImageUpload
+                  value={value || ''}
+                  onChange={onChange}
+                  onRemove={() => onChange('')}
+                  placeholder={field.placeholder || 'Selecciona una imagen para ' + field.label}
+                  maxSize={field.maxSize || 5}
+                />
+              )}
+            />
+            {field.helpText && <small>{field.helpText}</small>}
+            {error && <span className="field-error">{error.message as string}</span>}
+          </div>
+        );
+
       case 'file':
         return (
           <div key={field.id} className="form-field full-width">
@@ -305,10 +333,10 @@ export default function ItemForm() {
               {...register(fieldName, {
                 required: field.required ? `${field.label} es requerido` : false,
               })}
-              placeholder={field.placeholder || '/images/example.png'}
+              placeholder={field.placeholder || '/files/example.pdf'}
             />
             <small>
-              {field.helpText || 'Ruta de la imagen (ej: /images/example.png)'}
+              {field.helpText || 'Ruta del archivo (ej: /files/example.pdf)'}
             </small>
             {error && <span className="field-error">{error.message as string}</span>}
           </div>

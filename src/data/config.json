@@ -6,7 +6,19 @@
     "description": "Explora proyectos estudiantiles usando búsqueda por voz impulsada por IA",
     "url": "https://proyectos.udd.cl",
     "language": "es",
-    "timezone": "America/Santiago"
+    "timezone": "America/Santiago",
+    "logo": "/images/logo.png",
+    "favicon": "/favicon.ico",
+    "email": "contacto@udd.cl",
+    "phone": "+56 2 2327 9000",
+    "address": "Av. Plaza 680, Las Condes, Santiago",
+    "socialMedia": {
+      "twitter": "https://twitter.com/UDDChile",
+      "facebook": "https://facebook.com/UDDChile",
+      "instagram": "https://instagram.com/uddchile",
+      "linkedin": "https://linkedin.com/school/universidad-del-desarrollo",
+      "youtube": "https://youtube.com/@UDDChile"
+    }
   },
   "seo": {
     "title": "UDD Proyectos - Búsqueda por Voz",
@@ -20,7 +32,12 @@
       "estudiantes"
     ],
     "ogImage": "/og-image.jpg",
-    "twitterHandle": "@UDDChile"
+    "ogImageAlt": "UDD Proyectos - Plataforma de búsqueda por voz",
+    "twitterHandle": "@UDDChile",
+    "twitterCard": "summary_large_image",
+    "canonical": "https://proyectos.udd.cl",
+    "robots": "index, follow",
+    "author": "Universidad del Desarrollo"
   },
   "features": {
     "voiceSearch": true,
@@ -47,6 +64,22 @@
     "enabled": true,
     "path": "/admin",
     "allowJsonEdit": true,
-    "allowFileUpload": true
+    "allowFileUpload": true,
+    "maxFileSize": "5MB",
+    "allowedFileTypes": ["jpg", "jpeg", "png", "gif", "webp", "svg"],
+    "uploadsPath": "/images/uploads"
+  },
+  "maintenance": {
+    "enabled": false,
+    "message": "Sitio en mantenimiento. Vuelve pronto.",
+    "allowedIPs": []
+  },
+  "security": {
+    "allowedOrigins": ["https://proyectos.udd.cl"],
+    "rateLimit": {
+      "enabled": true,
+      "maxRequests": 100,
+      "windowMinutes": 15
+    }
   }
 }

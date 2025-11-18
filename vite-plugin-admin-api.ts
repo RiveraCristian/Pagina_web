@@ -215,13 +215,11 @@ export function adminApiPlugin(options: AdminApiOptions = {}): Plugin {
         }
       });
 
-      // POST /api/upload-image - Subir imagen
-      server.middlewares.use('/api/upload-image', async (req, res, next) => {
+      // POST /api/upload/image - Subir imagen
+      server.middlewares.use('/api/upload/image', async (req, res, next) => {
         if (req.method !== 'POST') return next();
 
         try {
-          // Parse multipart form data (simplificado)
-          // En producción, usar una librería como 'formidable' o 'busboy'
           let data = Buffer.alloc(0);
           
           req.on('data', (chunk: Buffer) => {
@@ -230,63 +228,105 @@ export function adminApiPlugin(options: AdminApiOptions = {}): Plugin {
 
           req.on('end', async () => {
             try {
-              // Extraer archivo del multipart (simplificado)
-              const boundary = req.headers['content-type']?.split('boundary=')[1];
-              if (!boundary) {
-                sendError(res, 'Invalid content-type', 400);
+              const contentType = req.headers['content-type'] || '';
+              
+              if (!contentType.includes('multipart/form-data')) {
+                sendError(res, 'Content-Type debe ser multipart/form-data', 400);
                 return;
               }
 
-              const parts = data.toString('binary').split(`--${boundary}`);
-              
-              for (const part of parts) {
-                if (part.includes('filename=')) {
-                  const filenameMatch = part.match(/filename="([^"]+)"/);
-                  if (!filenameMatch) continue;
-
-                  const filename = filenameMatch[1];
-                  const contentTypeMatch = part.match(/Content-Type: ([^\r\n]+)/);
-                  
-                  if (!contentTypeMatch) continue;
-
-                  // Extraer contenido binario del archivo
-                  const contentStart = part.indexOf('\r\n\r\n') + 4;
-                  const contentEnd = part.lastIndexOf('\r\n');
-                  const fileContent = part.substring(contentStart, contentEnd);
-
-                  // Generar nombre único
-                  const timestamp = Date.now();
-                  const ext = path.extname(filename);
-                  const uniqueFilename = `${timestamp}-${Math.random().toString(36).substring(2, 9)}${ext}`;
-
-                  // Guardar archivo
-                  await ensureDir(uploadsDir);
-                  const filePath = path.join(uploadsDir, uniqueFilename);
-                  
-                  // Convertir de binary string a Buffer
-                  const buffer = Buffer.from(fileContent, 'binary');
-                  await fs.writeFile(filePath, buffer);
-
-                  const publicUrl = `/images/uploads/${uniqueFilename}`;
-                  console.log(`✅ Image uploaded: ${publicUrl}`);
-                  
-                  sendJSON(res, {
-                    success: true,
-                    url: publicUrl,
-                    filename: uniqueFilename,
-                    size: buffer.length,
-                  });
-                  return;
-                }
+              // Extraer boundary
+              const boundaryMatch = contentType.match(/boundary=(.+)$/);
+              if (!boundaryMatch) {
+                sendError(res, 'Boundary no encontrado', 400);
+                return;
               }
 
-              sendError(res, 'No file found in request', 400);
+              const boundary = '--' + boundaryMatch[1];
+              const parts = data.toString('binary').split(boundary);
+              
+              for (const part of parts) {
+                if (!part.includes('Content-Disposition: form-data')) continue;
+                if (!part.includes('filename=')) continue;
+
+                // Extraer información del archivo
+                const filenameMatch = part.match(/filename="([^"]+)"/);
+                if (!filenameMatch) continue;
+
+                const originalFilename = filenameMatch[1];
+                
+                // Validar extensión
+                const ext = path.extname(originalFilename).toLowerCase();
+                const allowedExts = ['.jpg', '.jpeg', '.png', '.gif', '.webp'];
+                if (!allowedExts.includes(ext)) {
+                  sendError(res, 'Tipo de archivo no permitido. Solo: JPG, PNG, GIF, WebP', 400);
+                  return;
+                }
+
+                // Extraer contenido del archivo
+                const headerEnd = part.indexOf('\r\n\r\n');
+                if (headerEnd === -1) continue;
+
+                const fileContent = part.substring(headerEnd + 4, part.length - 2); // -2 para quitar \r\n final
+                const buffer = Buffer.from(fileContent, 'binary');
+
+                // Validar tamaño (5MB máximo)
+                const maxSize = 5 * 1024 * 1024;
+                if (buffer.length > maxSize) {
+                  sendError(res, 'Archivo muy grande. Máximo 5MB', 400);
+                  return;
+                }
+
+                // Validar que sea una imagen real (magic bytes)
+                const isValidImage = 
+                  buffer.subarray(0, 4).equals(Buffer.from([0xFF, 0xD8, 0xFF])) || // JPEG
+                  buffer.subarray(0, 8).equals(Buffer.from([0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A])) || // PNG
+                  buffer.subarray(0, 6).equals(Buffer.from([0x47, 0x49, 0x46, 0x38])); // GIF
+
+                if (!isValidImage && ext !== '.webp') {
+                  sendError(res, 'Archivo no es una imagen válida', 400);
+                  return;
+                }
+
+                // Generar nombre único
+                const timestamp = Date.now();
+                const randomStr = Math.random().toString(36).substring(2, 9);
+                const uniqueFilename = `${timestamp}-${randomStr}${ext}`;
+
+                // Asegurar directorio y guardar
+                await ensureDir(uploadsDir);
+                const filePath = path.join(uploadsDir, uniqueFilename);
+                await fs.writeFile(filePath, buffer);
+
+                const publicUrl = `/images/uploads/${uniqueFilename}`;
+                console.log(`✅ Imagen subida: ${publicUrl} (${(buffer.length / 1024).toFixed(1)}KB)`);
+                
+                sendJSON(res, {
+                  success: true,
+                  url: publicUrl,
+                  filename: uniqueFilename,
+                  originalName: originalFilename,
+                  size: buffer.length,
+                  sizeFormatted: `${(buffer.length / 1024).toFixed(1)}KB`
+                });
+                return;
+              }
+
+              sendError(res, 'No se encontró archivo en la petición', 400);
             } catch (error: any) {
-              sendError(res, `Failed to process upload: ${error.message}`);
+              console.error('Error processing upload:', error);
+              sendError(res, `Error al procesar archivo: ${error.message}`, 500);
             }
           });
+
+          req.on('error', (error: any) => {
+            console.error('Request error:', error);
+            sendError(res, `Error en petición: ${error.message}`, 500);
+          });
+
         } catch (error: any) {
-          sendError(res, `Failed to upload image: ${error.message}`);
+          console.error('Upload handler error:', error);
+          sendError(res, `Error al subir imagen: ${error.message}`, 500);
         }
       });
 

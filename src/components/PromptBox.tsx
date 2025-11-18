@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef, forwardRef, useImperativeHandle } from 'react';
 import { VoiceButton } from './VoiceButton';
-import { TranscriptConfirmation } from './TranscriptConfirmation';
 import { LanguageSelector } from './LanguageSelector';
 import { useSpeechRecognition } from '../hooks/useSpeechRecognition';
 import '../styles/PromptBox.css';
@@ -17,8 +16,6 @@ export interface PromptBoxRef {
 export const PromptBox = forwardRef<PromptBoxRef, PromptBoxProps>(
   function PromptBox({ onSubmit, isVisible }, ref) {
   const [query, setQuery] = useState('');
-  const [showConfirmation, setShowConfirmation] = useState(false);
-  const [pendingTranscript, setPendingTranscript] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
   
   const {
@@ -48,13 +45,12 @@ export const PromptBox = forwardRef<PromptBoxRef, PromptBoxProps>(
     }
   }, [isVisible]);
 
-  // Cuando se recibe un transcript de voz, mostrar confirmación
+  // Cuando se recibe un transcript de voz, buscar directamente
   useEffect(() => {
     if (transcript && transcript.trim()) {
-      setPendingTranscript(transcript);
-      setShowConfirmation(true);
+      onSubmit(transcript.trim());
     }
-  }, [transcript]);
+  }, [transcript, onSubmit]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -64,16 +60,7 @@ export const PromptBox = forwardRef<PromptBoxRef, PromptBoxProps>(
     }
   };
 
-  const handleConfirmTranscript = (text: string) => {
-    setShowConfirmation(false);
-    onSubmit(text.trim());
-    setPendingTranscript('');
-  };
 
-  const handleCancelTranscript = () => {
-    setShowConfirmation(false);
-    setPendingTranscript('');
-  };
 
   if (!isVisible) return null;
 
@@ -128,13 +115,7 @@ export const PromptBox = forwardRef<PromptBoxRef, PromptBoxProps>(
         </div>
       )}
 
-      {showConfirmation && (
-        <TranscriptConfirmation
-          transcript={pendingTranscript}
-          onConfirm={handleConfirmTranscript}
-          onCancel={handleCancelTranscript}
-        />
-      )}
+
     </div>
   );
 });

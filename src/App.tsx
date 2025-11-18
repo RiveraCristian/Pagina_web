@@ -14,11 +14,11 @@ import { cacheManager } from './utils/cache';
 const SceneView = lazy(() => import('./components/SceneView').then(module => ({ default: module.SceneView })));
 const SearchAgainHint = lazy(() => import('./components/SearchAgainHint').then(module => ({ default: module.SearchAgainHint })));
 const SearchHistory = lazy(() => import('./components/SearchHistory').then(module => ({ default: module.SearchHistory })));
-const EmptyState = lazy(() => import('./components/EmptyState').then(module => ({ default: module.EmptyState })));
 const BackToTopButton = lazy(() => import('./components/BackToTopButton').then(module => ({ default: module.BackToTopButton })));
 const KeyboardShortcutsHelp = lazy(() => import('./components/KeyboardShortcutsHelp').then(module => ({ default: module.KeyboardShortcutsHelp })));
 const ThemeToggle = lazy(() => import('./components/ThemeToggle').then(module => ({ default: module.ThemeToggle })));
 const InstallPrompt = lazy(() => import('./components/InstallPrompt').then(module => ({ default: module.InstallPrompt })));
+const SearchFooter = lazy(() => import('./components/SearchFooter').then(module => ({ default: module.SearchFooter })));
 import { getSceneForQuery } from './services/aiSceneService';
 import type { SceneResponseWithResolvedProjects, ResolvedSceneProject } from './types';
 import './App.css';
@@ -27,7 +27,7 @@ function App() {
   // Cargar configuración y datos desde JSON
   const { config } = useAppConfig();
   const { themeConfig } = useThemeConfig();
-  const { projects: PROJECTS } = useProjects();
+  const { projects: PROJECTS, loading: projectsLoading } = useProjects();
   const [promptVisible, setPromptVisible] = useState(false);
   const [scene, setScene] = useState<SceneResponseWithResolvedProjects | null>(null);
   const [loading, setLoading] = useState(false);
@@ -126,6 +126,17 @@ function App() {
       return;
     }
 
+    // Verificar que los proyectos estén cargados
+    if (projectsLoading) {
+      setError('Cargando datos de proyectos, por favor espera un momento...');
+      return;
+    }
+
+    if (!PROJECTS || PROJECTS.length === 0) {
+      setError('No hay proyectos disponibles en este momento.');
+      return;
+    }
+
     // Detect XSS attempts
     if (detectXSSAttempt(query)) {
       setError('Búsqueda no válida. Por favor intenta con otros términos.');
@@ -167,17 +178,22 @@ function App() {
 
     try {
       // Llamar al servicio de IA
+      console.log('🔍 Buscando:', sanitizedQuery);
       const sceneResponse = await getSceneForQuery(sanitizedQuery);
+      console.log('🤖 Respuesta de IA:', sceneResponse);
 
       // Resolver los proyectos cruzando con el catálogo local
+      console.log('📂 Proyectos disponibles:', PROJECTS.length, 'proyectos');
       const resolvedProjects: ResolvedSceneProject[] = sceneResponse.proyectos
         .map((sceneProject) => {
           const project = PROJECTS.find((p) => p.id === sceneProject.id);
           
           if (!project) {
-            console.warn(`Proyecto con id "${sceneProject.id}" no encontrado en el catálogo`);
+            console.warn(`❌ Proyecto con id "${sceneProject.id}" no encontrado en el catálogo`);
             return null;
           }
+
+          console.log(`✅ Proyecto encontrado: ${project.id} - ${project.nombre}`);
 
           const resolved: ResolvedSceneProject = {
             id: project.id,
@@ -243,7 +259,7 @@ function App() {
           <p>Cargando...</p>
         </div>
       }>
-        {promptVisible && !scene && !loading && <EmptyState />}
+
         
         {promptVisible && scene && (
           <>
@@ -266,6 +282,8 @@ function App() {
         )}
         
         <SceneView scene={scene} />
+        
+        <SearchFooter isVisible={promptVisible && !scene && !loading && !error} />
       </Suspense>
     </div>
   );

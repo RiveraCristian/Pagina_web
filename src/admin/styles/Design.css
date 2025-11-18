@@ -348,6 +348,50 @@
   animation: spin 1s linear infinite;
 }
 
+/* Form Fields Override - Fix contrast */
+.design-form input[type="text"],
+.design-form input[type="number"],
+.design-form input[type="email"],
+.design-form input[type="url"],
+.design-form textarea,
+.design-form select {
+  color: #1a1a2e !important;
+  background: white !important;
+  border: 2px solid #e5e7eb !important;
+  border-radius: 6px !important;
+  padding: 0.75rem 1rem !important;
+  font-size: 0.875rem !important;
+  transition: all 0.2s ease !important;
+}
+
+.design-form input[type="text"]:focus,
+.design-form input[type="number"]:focus,
+.design-form input[type="email"]:focus,
+.design-form input[type="url"]:focus,
+.design-form textarea:focus,
+.design-form select:focus {
+  outline: none !important;
+  border-color: #00ff88 !important;
+  box-shadow: 0 0 0 3px rgba(0, 255, 136, 0.1) !important;
+}
+
+/* Ensure labels are visible */
+.design-form label {
+  color: #374151 !important;
+  font-weight: 600 !important;
+  font-size: 0.875rem !important;
+  margin-bottom: 0.5rem !important;
+  display: block !important;
+}
+
+/* Small helper text */
+.design-form small {
+  color: #666 !important;
+  font-size: 0.75rem !important;
+  margin-top: 0.25rem !important;
+  display: block !important;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
   .design-header {
