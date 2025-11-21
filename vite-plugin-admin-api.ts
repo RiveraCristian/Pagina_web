@@ -353,6 +353,158 @@ export function adminApiPlugin(options: AdminApiOptions = {}): Plugin {
         }
       });
 
+      // POST /api/test-ai - Probar configuración de IA
+      server.middlewares.use('/api/test-ai', async (req, res, next) => {
+        if (req.method !== 'POST') return next();
+
+        try {
+          const { query, config } = await readBody(req);
+          
+          if (!query) {
+            sendError(res, 'Query is required', 400);
+            return;
+          }
+
+          // Simular prueba de IA (en una implementación real, aquí llamarías a OpenAI)
+          const mockResponse = {
+            answer: `Respuesta simulada para: "${query}". Esta es una prueba del sistema de IA configurado.`,
+            source: config?.openai?.enabled ? 'openai' : 'local',
+            confidence: Math.random() * 0.4 + 0.6, // Entre 60% y 100%
+            processingTime: Math.random() * 1000 + 500,
+            tokens: config?.openai?.enabled ? {
+              prompt: Math.floor(Math.random() * 50 + 20),
+              completion: Math.floor(Math.random() * 100 + 50),
+              total: Math.floor(Math.random() * 150 + 70)
+            } : undefined
+          };
+
+          console.log(`🤖 AI Test: "${query}" -> ${mockResponse.source}`);
+          sendJSON(res, { success: true, response: mockResponse });
+        } catch (error: any) {
+          sendError(res, `Failed to test AI: ${error.message}`);
+        }
+      });
+
+      // GET /api/pages - Leer páginas
+      server.middlewares.use('/api/pages', async (req, res, next) => {
+        if (req.method !== 'GET') return next();
+
+        try {
+          const pagesPath = path.join(dataDir, 'pages.json');
+          
+          if (!existsSync(pagesPath)) {
+            sendJSON(res, { pages: [] });
+            return;
+          }
+
+          const data = await fs.readFile(pagesPath, 'utf-8');
+          sendJSON(res, JSON.parse(data));
+        } catch (error: any) {
+          sendError(res, `Failed to read pages: ${error.message}`);
+        }
+      });
+
+      // GET /api/pages/:id - Leer página específica
+      server.middlewares.use('/api/pages/', async (req, res, next) => {
+        if (req.method !== 'GET') return next();
+
+        const match = req.url?.match(/^\/api\/pages\/([^/]+)$/);
+        if (!match) return next();
+
+        const pageId = match[1];
+
+        try {
+          const pagesPath = path.join(dataDir, 'pages.json');
+          
+          if (!existsSync(pagesPath)) {
+            sendError(res, 'Page not found', 404);
+            return;
+          }
+
+          const data = await fs.readFile(pagesPath, 'utf-8');
+          const pagesData = JSON.parse(data);
+          const page = pagesData.pages.find((p: any) => p.id === pageId);
+
+          if (!page) {
+            sendError(res, 'Page not found', 404);
+            return;
+          }
+
+          sendJSON(res, page);
+        } catch (error: any) {
+          sendError(res, `Failed to read page: ${error.message}`);
+        }
+      });
+
+      // POST /api/save-page - Guardar página
+      server.middlewares.use('/api/save-page', async (req, res, next) => {
+        if (req.method !== 'POST') return next();
+
+        try {
+          const pageData = await readBody(req);
+          const pagesPath = path.join(dataDir, 'pages.json');
+          
+          let pagesData = { pages: [] };
+          
+          // Cargar páginas existentes
+          if (existsSync(pagesPath)) {
+            const existingData = await fs.readFile(pagesPath, 'utf-8');
+            pagesData = JSON.parse(existingData);
+          }
+
+          // Buscar si la página existe
+          const existingIndex = pagesData.pages.findIndex((p: any) => p.id === pageData.id);
+          
+          if (existingIndex >= 0) {
+            // Actualizar página existente
+            pagesData.pages[existingIndex] = pageData;
+          } else {
+            // Agregar nueva página
+            pagesData.pages.push(pageData);
+          }
+
+          await fs.writeFile(pagesPath, JSON.stringify(pagesData, null, 2), 'utf-8');
+          
+          console.log(`✅ Page saved: ${pageData.title}`);
+          sendJSON(res, { success: true, message: 'Page saved', page: pageData });
+        } catch (error: any) {
+          sendError(res, `Failed to save page: ${error.message}`);
+        }
+      });
+
+      // POST /api/delete-page - Eliminar página
+      server.middlewares.use('/api/delete-page', async (req, res, next) => {
+        if (req.method !== 'POST') return next();
+
+        try {
+          const { id } = await readBody(req);
+          const pagesPath = path.join(dataDir, 'pages.json');
+          
+          if (!existsSync(pagesPath)) {
+            sendError(res, 'Page not found', 404);
+            return;
+          }
+
+          const data = await fs.readFile(pagesPath, 'utf-8');
+          const pagesData = JSON.parse(data);
+          
+          const originalLength = pagesData.pages.length;
+          pagesData.pages = pagesData.pages.filter((p: any) => p.id !== id);
+          
+          if (pagesData.pages.length === originalLength) {
+            sendError(res, 'Page not found', 404);
+            return;
+          }
+
+          await fs.writeFile(pagesPath, JSON.stringify(pagesData, null, 2), 'utf-8');
+          
+          console.log(`✅ Page deleted: ${id}`);
+          sendJSON(res, { success: true, message: 'Page deleted' });
+        } catch (error: any) {
+          sendError(res, `Failed to delete page: ${error.message}`);
+        }
+      });
+
       console.log('🔧 Admin API plugin configured');
       console.log(`   Data directory: ${dataDir}`);
       console.log(`   Uploads directory: ${uploadsDir}`);

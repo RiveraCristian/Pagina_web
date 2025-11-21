@@ -7,6 +7,7 @@ import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
 import { useAppConfig } from './hooks/useAppConfig';
 import { useThemeConfig } from './hooks/useThemeConfig';
 import { useProjects } from './hooks/useProjects';
+import { useAI } from './hooks/useAI';
 import { sanitizeSearchQuery, detectXSSAttempt, checkRateLimit } from './utils/sanitize';
 import { cacheManager } from './utils/cache';
 
@@ -28,6 +29,7 @@ function App() {
   const { config } = useAppConfig();
   const { themeConfig } = useThemeConfig();
   const { projects: PROJECTS, loading: projectsLoading } = useProjects();
+  const { isInitialized: aiInitialized, error: aiError } = useAI();
   const [promptVisible, setPromptVisible] = useState(false);
   const [scene, setScene] = useState<SceneResponseWithResolvedProjects | null>(null);
   const [loading, setLoading] = useState(false);

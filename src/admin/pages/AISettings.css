@@ -1,0 +1,312 @@
+/* Página de configuración de IA */
+.ai-settings {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--border-color, #e1e5e9);
+}
+
+.admin-page-title {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: var(--text-primary, #1a1a1a);
+}
+
+/* Estadísticas */
+.stats-section {
+  margin-bottom: 2rem;
+}
+
+.stats-section h2 {
+  font-size: 1.25rem;
+  margin-bottom: 1rem;
+  color: var(--text-primary, #333);
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1rem;
+}
+
+.stat-card {
+  background: var(--surface-color, #ffffff);
+  border: 1px solid var(--border-color, #e1e5e9);
+  border-radius: 8px;
+  padding: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.stat-icon {
+  font-size: 2rem;
+  color: var(--primary-color, #007bff);
+}
+
+.stat-number {
+  display: block;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-primary, #1a1a1a);
+}
+
+.stat-label {
+  display: block;
+  font-size: 0.875rem;
+  color: var(--text-muted, #6c757d);
+}
+
+.stat-status {
+  display: block;
+  font-size: 1rem;
+  font-weight: 600;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+}
+
+.stat-status.enabled {
+  background: var(--success-light, #d4edda);
+  color: var(--success-color, #155724);
+}
+
+.stat-status.disabled {
+  background: var(--warning-light, #fff3cd);
+  color: var(--warning-color, #856404);
+}
+
+/* Secciones de configuración */
+.settings-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.settings-section {
+  background: var(--surface-color, #ffffff);
+  border: 1px solid var(--border-color, #e1e5e9);
+  border-radius: 8px;
+  padding: 1.5rem;
+}
+
+.settings-section h2 {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+  color: var(--text-primary, #1a1a1a);
+  border-bottom: 1px solid var(--border-light, #f1f3f4);
+  padding-bottom: 0.75rem;
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-group label {
+  display: block;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+  color: var(--text-primary, #333);
+}
+
+.form-group input[type="text"],
+.form-group input[type="password"],
+.form-group input[type="number"],
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid var(--border-color, #ddd);
+  border-radius: 6px;
+  font-size: 0.875rem;
+  transition: border-color 0.2s ease;
+  background: var(--input-background, #ffffff);
+  color: var(--text-primary, #333);
+}
+
+.form-group input[type="text"]:focus,
+.form-group input[type="password"]:focus,
+.form-group input[type="number"]:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: var(--primary-color, #007bff);
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+}
+
+.form-group input[type="text"]:disabled,
+.form-group input[type="password"]:disabled,
+.form-group input[type="number"]:disabled,
+.form-group select:disabled,
+.form-group textarea:disabled {
+  background: var(--surface-disabled, #f8f9fa);
+  color: var(--text-muted, #6c757d);
+  cursor: not-allowed;
+}
+
+.form-group input[type="range"] {
+  width: 100%;
+  margin: 0.5rem 0;
+}
+
+.form-group small {
+  display: block;
+  font-size: 0.75rem;
+  color: var(--text-muted, #6c757d);
+  margin-top: 0.25rem;
+}
+
+.form-group small a {
+  color: var(--primary-color, #007bff);
+  text-decoration: none;
+}
+
+.form-group small a:hover {
+  text-decoration: underline;
+}
+
+/* Checkbox personalizado */
+.form-group label input[type="checkbox"] {
+  margin-right: 0.5rem;
+  transform: scale(1.1);
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+/* Sección de pruebas */
+.test-section {
+  background: var(--surface-light, #f8f9fa);
+  border-radius: 6px;
+  padding: 1rem;
+}
+
+.test-section .form-group {
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-end;
+  margin-bottom: 1rem;
+}
+
+.test-section .form-group label {
+  flex: 1;
+}
+
+.test-section .admin-button {
+  margin-bottom: 0;
+  height: fit-content;
+  white-space: nowrap;
+}
+
+.test-result {
+  margin-top: 1rem;
+  padding: 1rem;
+  border-radius: 6px;
+  font-size: 0.875rem;
+}
+
+.test-result.success,
+.test-result .success {
+  background: var(--success-light, #d4edda);
+  border: 1px solid var(--success-color, #28a745);
+}
+
+.test-result.error,
+.test-result .error {
+  background: var(--danger-light, #f8d7da);
+  border: 1px solid var(--danger-color, #dc3545);
+  color: var(--danger-color, #dc3545);
+}
+
+.result-header {
+  display: flex;
+  justify-content: between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.confidence {
+  font-size: 0.75rem;
+  background: var(--primary-light, #e3f2fd);
+  color: var(--primary-color, #1976d2);
+  padding: 0.25rem 0.5rem;
+  border-radius: 12px;
+  font-weight: 500;
+}
+
+.answer {
+  white-space: pre-wrap;
+  line-height: 1.5;
+  margin-bottom: 0.5rem;
+}
+
+/* Loading state */
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+  font-size: 1rem;
+  color: var(--text-muted, #6c757d);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .page-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1rem;
+  }
+
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .test-section .form-group {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .result-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+}
+
+/* Tema oscuro */
+@media (prefers-color-scheme: dark) {
+  .stat-card {
+    background: var(--surface-dark, #2a2a2a);
+    border-color: var(--border-dark, #444);
+  }
+
+  .settings-section {
+    background: var(--surface-dark, #2a2a2a);
+    border-color: var(--border-dark, #444);
+  }
+
+  .test-section {
+    background: var(--surface-darker, #1a1a1a);
+  }
+}

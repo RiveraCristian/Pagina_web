@@ -14,6 +14,8 @@ import {
   FaSave,
   FaTimes,
   FaSignOutAlt,
+  FaRobot,
+  FaGlobe,
 } from 'react-icons/fa';
 import { FileManager } from './utils/fileManager';
 import { logout } from './utils/auth';
@@ -82,9 +84,19 @@ export function AdminLayout() {
             <span>Contenido</span>
           </NavLink>
 
+          <NavLink to="/admin/pages" className={({ isActive }: { isActive: boolean }) => (isActive ? 'active' : '')}>
+            <FaGlobe />
+            <span>Páginas</span>
+          </NavLink>
+
           <NavLink to="/admin/design" className={({ isActive }: { isActive: boolean }) => (isActive ? 'active' : '')}>
             <FaPalette />
             <span>Diseño</span>
+          </NavLink>
+
+          <NavLink to="/admin/ai" className={({ isActive }: { isActive: boolean }) => (isActive ? 'active' : '')}>
+            <FaRobot />
+            <span>IA y Búsqueda</span>
           </NavLink>
 
           <NavLink to="/admin/settings" className={({ isActive }: { isActive: boolean }) => (isActive ? 'active' : '')}>
