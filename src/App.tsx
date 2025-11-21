@@ -42,6 +42,8 @@ function App() {
   useEffect(() => {
     if (config?.seo?.title) {
       document.title = config.seo.title;
+    } else if (config?.site?.name) {
+      document.title = config.site.name;
     }
   }, [config]);
 

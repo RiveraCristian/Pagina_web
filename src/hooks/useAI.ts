@@ -25,6 +25,19 @@ export function useAI(options: UseAIOptions = {}) {
     }
   }, [projects, autoInitialize, isInitialized]);
 
+  // Escuchar eventos de reindexación
+  useEffect(() => {
+    const handleReindex = () => {
+      console.log('🔄 Reindexing search engine...');
+      if (isInitialized) {
+        initializeAI();
+      }
+    };
+
+    window.addEventListener('reindexSearch', handleReindex);
+    return () => window.removeEventListener('reindexSearch', handleReindex);
+  }, [isInitialized]);
+
   const initializeAI = useCallback(async () => {
     try {
       setIsLoading(true);
@@ -54,11 +67,43 @@ export function useAI(options: UseAIOptions = {}) {
         }
       };
 
-      // Preparar base de conocimiento
-      const knowledgeBase = [
-        ...projects,
-        // Agregar más fuentes de datos aquí cuando estén disponibles
-      ];
+      // Preparar base de conocimiento - CARGAR TODAS LAS CATEGORÍAS
+      let knowledgeBase: any[] = [];
+      
+      try {
+        // 1. Cargar categorías
+        const categoriesResponse = await fetch('/api/categories');
+        const categoriesData = await categoriesResponse.json();
+        
+        // 2. Cargar todos los items de todas las categorías
+        for (const category of categoriesData.categories) {
+          try {
+            const itemsResponse = await fetch(`/api/items/${category.id}`);
+            const categoryItems = await itemsResponse.json();
+            
+            // Agregar todos los items de esta categoría
+            knowledgeBase.push(...categoryItems);
+            
+            console.log(`✅ Loaded ${categoryItems.length} items from category "${category.name}"`);
+          } catch (categoryError) {
+            console.warn(`⚠️ Could not load items from category "${category.id}":`, categoryError);
+            // Continuar con otras categorías
+          }
+        }
+        
+        // 3. También agregar proyectos legacy si existen
+        if (projects && projects.length > 0) {
+          knowledgeBase.push(...projects);
+          console.log(`✅ Added ${projects.length} legacy projects`);
+        }
+        
+        console.log(`🔍 Total knowledge base: ${knowledgeBase.length} items across ${categoriesData.categories.length} categories`);
+        
+      } catch (err) {
+        console.error('Error loading knowledge base:', err);
+        // Fallback a solo proyectos
+        knowledgeBase = [...projects];
+      }
 
       await aiService.initialize(aiConfig, knowledgeBase);
       setIsInitialized(true);

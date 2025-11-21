@@ -11,8 +11,8 @@
 
 import type { Plugin, ViteDevServer } from 'vite';
 import fs from 'fs/promises';
+import { createReadStream, createWriteStream, existsSync } from 'fs';
 import path from 'path';
-import { existsSync } from 'fs';
 
 interface AdminApiOptions {
   dataDir?: string;
@@ -77,35 +77,89 @@ export function adminApiPlugin(options: AdminApiOptions = {}): Plugin {
 
       // ==================== API ENDPOINTS ====================
 
-      // GET /api/config - Leer configuración
-      server.middlewares.use('/api/config', async (req, res, next) => {
-        if (req.method !== 'GET') return next();
-
-        try {
-          const configPath = path.join(dataDir, 'config.json');
-          const data = await fs.readFile(configPath, 'utf-8');
-          sendJSON(res, JSON.parse(data));
-        } catch (error: any) {
-          sendError(res, `Failed to read config: ${error.message}`);
-        }
-      });
-
-      // POST /api/save-config - Guardar configuración
-      server.middlewares.use('/api/save-config', async (req, res, next) => {
+      // POST /api/upload - Upload de imágenes
+      server.middlewares.use('/api/upload', async (req, res, next) => {
         if (req.method !== 'POST') return next();
-
+        
         try {
-          const config = await readBody(req);
-          const configPath = path.join(dataDir, 'config.json');
+          const { fileName, fileData, fileType } = await readBody(req);
           
-          await fs.writeFile(configPath, JSON.stringify(config, null, 2), 'utf-8');
+          // Validar tipo de archivo
+          const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/svg+xml'];
+          if (!allowedTypes.includes(fileType)) {
+            return sendError(res, 'Tipo de archivo no soportado', 400);
+          }
           
-          console.log('✅ Config saved successfully');
-          sendJSON(res, { success: true, message: 'Config saved' });
+          // Crear directorio de uploads si no existe
+          const uploadsDir = path.join(process.cwd(), 'public', 'uploads');
+          await ensureDir(uploadsDir);
+          
+          // Generar nombre único
+          const timestamp = Date.now();
+          const ext = path.extname(fileName);
+          const uniqueFileName = `logo_${timestamp}${ext}`;
+          const filePath = path.join(uploadsDir, uniqueFileName);
+          
+          // Convertir base64 a buffer y guardar
+          const base64Data = fileData.split(',')[1];
+          const buffer = Buffer.from(base64Data, 'base64');
+          await fs.writeFile(filePath, buffer);
+          
+          const publicPath = `/uploads/${uniqueFileName}`;
+          console.log('✅ Image uploaded:', publicPath);
+          
+          sendJSON(res, {
+            success: true,
+            path: publicPath,
+            fileName: uniqueFileName
+          });
         } catch (error: any) {
-          sendError(res, `Failed to save config: ${error.message}`);
+          console.error('❌ Upload error:', error);
+          sendError(res, `Error al subir archivo: ${error.message}`);
         }
       });
+
+      // GET/PUT /api/config - Leer/Guardar configuración
+      server.middlewares.use('/api/config', async (req, res, next) => {
+        const configPath = path.join(process.cwd(), 'src/data/config.json');
+        
+        if (req.method === 'GET') {
+          try {
+            // Verificar si el archivo existe
+            await fs.access(configPath);
+            const data = await fs.readFile(configPath, 'utf-8');
+            sendJSON(res, JSON.parse(data));
+          } catch (error: any) {
+            console.log('⚠️ Config file not found, using existing file...');
+            sendError(res, `Failed to read config: ${error.message}`);
+          }
+        } else if (req.method === 'PUT') {
+          try {
+            const config = await readBody(req);
+            
+            // Validar que el config no esté vacío
+            if (!config || typeof config !== 'object') {
+              throw new Error('Invalid configuration data');
+            }
+            
+            // Crear directorio si no existe
+            await fs.mkdir(path.dirname(configPath), { recursive: true });
+            
+            // Guardar configuración
+            await fs.writeFile(configPath, JSON.stringify(config, null, 2), 'utf-8');
+            
+            console.log('✅ Site config saved successfully to:', configPath);
+            sendJSON(res, { success: true, message: 'Configuration updated successfully' });
+          } catch (error: any) {
+            console.error('❌ Error saving config:', error);
+            sendError(res, `Failed to save config: ${error.message}`);
+          }
+        } else {
+          return next();
+        }
+      });
+
+      // El endpoint de guardado ahora está en PUT /api/config
 
       // GET /api/theme - Leer tema
       server.middlewares.use('/api/theme', async (req, res, next) => {
@@ -382,6 +436,93 @@ export function adminApiPlugin(options: AdminApiOptions = {}): Plugin {
           sendJSON(res, { success: true, response: mockResponse });
         } catch (error: any) {
           sendError(res, `Failed to test AI: ${error.message}`);
+        }
+      });
+
+      // GET /api/config/test - Verificar estado de configuración
+      server.middlewares.use('/api/config/test', async (req, res, next) => {
+        if (req.method !== 'GET') return next();
+        
+        try {
+          const configPath = path.join(process.cwd(), 'src/data/config.json');
+          const exists = await fs.access(configPath).then(() => true).catch(() => false);
+          
+          if (exists) {
+            const stats = await fs.stat(configPath);
+            const content = await fs.readFile(configPath, 'utf-8');
+            
+            sendJSON(res, {
+              exists: true,
+              path: configPath,
+              size: stats.size,
+              modified: stats.mtime,
+              valid: true,
+              preview: content.substring(0, 200)
+            });
+          } else {
+            sendJSON(res, {
+              exists: false,
+              path: configPath,
+              error: 'File not found'
+            });
+          }
+        } catch (error: any) {
+          sendJSON(res, {
+            exists: false,
+            error: error.message
+          });
+        }
+      });
+
+      // Configuración del sitio
+      server.middlewares.use('/api/config/site', async (req, res, next) => {
+        if (req.method !== 'GET') return next();
+        
+        try {
+          const configPath = path.join(process.cwd(), 'src/data/config.json');
+          const config = JSON.parse(await fs.readFile(configPath, 'utf-8'));
+          sendJSON(res, {
+            siteName: config.site?.name || 'Mi Sitio Web',
+            siteSubtitle: config.site?.description || 'Sitio configurable',
+            welcomeMessage: config.site?.tagline || 'Haz clic para comenzar'
+          });
+        } catch (error) {
+          console.log('⚠️ Config site error:', error);
+          sendJSON(res, {
+            siteName: 'Colabi Spa',
+            siteSubtitle: 'Sitio configurable', 
+            welcomeMessage: 'Haz clic para comenzar'
+          });
+        }
+      });
+
+      server.middlewares.use('/api/config/empty-state', async (req, res, next) => {
+        if (req.method !== 'GET') return next();
+        
+        try {
+          const configPath = path.join(process.cwd(), 'src/data/config.json');
+          const config = JSON.parse(await fs.readFile(configPath, 'utf-8'));
+          sendJSON(res, {
+            title: '¿Qué estás buscando?',
+            description: config.site?.description || 'Explora nuestro contenido',
+            suggestions: [
+              '¿Qué servicios ofrecen?',
+              'Cuéntame sobre sus proyectos',
+              'Información de contacto',
+              'Necesito ayuda'
+            ]
+          });
+        } catch (error) {
+          sendJSON(res, {
+            title: '¿Qué estás buscando?',
+            description: 'Explora nuestro contenido',
+            suggestions: [
+              '¿Qué servicios ofrecen?',
+              'Cuéntame sobre sus proyectos', 
+              'Información de contacto',
+              'Necesito ayuda'
+            ]
+          });
         }
       });
 

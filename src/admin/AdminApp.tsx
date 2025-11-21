@@ -14,6 +14,8 @@ import Design from './pages/Design';
 import AISettings from './pages/AISettings';
 import Pages from './pages/Pages';
 import PageForm from './pages/PageForm';
+import SearchEngine from './pages/SearchEngine';
+import { SiteConfig } from './SiteConfig';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -55,8 +57,10 @@ export default function AdminApp() {
             <Route path="items" element={<Items />} />
             <Route path="items/:categoryId/new" element={<ItemForm />} />
             <Route path="items/:categoryId/:id/edit" element={<ItemForm />} />
+            <Route path="config" element={<SiteConfig />} />
             <Route path="design" element={<Design />} />
             <Route path="ai" element={<AISettings />} />
+            <Route path="search-engine" element={<SearchEngine />} />
             <Route path="pages" element={<Pages />} />
             <Route path="pages/new" element={<PageForm />} />
             <Route path="pages/:id/edit" element={<PageForm />} />

@@ -1,43 +1,48 @@
 {
   "site": {
-    "name": "Universidad Del Desarrollo",
-    "shortName": "UDD",
-    "tagline": "Busca proyectos con tu voz",
-    "description": "Explora proyectos estudiantiles usando búsqueda por voz impulsada por IA",
-    "url": "https://proyectos.udd.cl",
+    "name": "Colabi Spa",
+    "shortName": "Colabi",
+    "tagline": "Tecnología y Diseño para el Futuro.",
+    "description": "Sitio web con búsqueda por voz e IA completamente configurable desde el admin",
+    "url": "https://mi-sitio.com",
     "language": "es",
     "timezone": "America/Santiago",
-    "logo": "/images/logo.png",
+    "logo": {
+      "type": "text",
+      "text": "Colabi Spa",
+      "image": "/uploads/logo_1763732483922.png",
+      "width": 200,
+      "height": 80
+    },
     "favicon": "/favicon.ico",
-    "email": "contacto@udd.cl",
-    "phone": "+56 2 2327 9000",
-    "address": "Av. Plaza 680, Las Condes, Santiago",
+    "email": "Soporte@colabi.tech",
+    "phone": "+56 9 0000 0000",
+    "address": "Dirección configurable",
     "socialMedia": {
-      "twitter": "https://twitter.com/UDDChile",
-      "facebook": "https://facebook.com/UDDChile",
-      "instagram": "https://instagram.com/uddchile",
-      "linkedin": "https://linkedin.com/school/universidad-del-desarrollo",
-      "youtube": "https://youtube.com/@UDDChile"
+      "twitter": "",
+      "facebook": "",
+      "instagram": "",
+      "linkedin": "",
+      "youtube": ""
     }
   },
   "seo": {
-    "title": "UDD Proyectos - Búsqueda por Voz",
-    "description": "Encuentra proyectos estudiantiles de la UDD con búsqueda por voz",
+    "title": "Colabi",
+    "description": "Sitio web con búsqueda por voz e IA configurable desde admin",
     "keywords": [
-      "proyectos",
-      "universidad",
+      "búsqueda inteligente",
+      "IA",
       "búsqueda por voz",
-      "UDD",
-      "innovación",
-      "estudiantes"
+      "sitio configurable",
+      "CMS"
     ],
     "ogImage": "/og-image.jpg",
-    "ogImageAlt": "UDD Proyectos - Plataforma de búsqueda por voz",
-    "twitterHandle": "@UDDChile",
+    "ogImageAlt": "Sitio web con búsqueda inteligente",
+    "twitterHandle": "",
     "twitterCard": "summary_large_image",
-    "canonical": "https://proyectos.udd.cl",
+    "canonical": "https://mi-sitio.com",
     "robots": "index, follow",
-    "author": "Universidad del Desarrollo"
+    "author": "Configurable desde Admin"
   },
   "features": {
     "voiceSearch": true,
@@ -49,7 +54,7 @@
     "analytics": false
   },
   "search": {
-    "placeholder": "Busca proyectos, nombres, facultades...",
+    "placeholder": "Busca contenido, servicios, información...",
     "voiceButtonText": "Buscar con voz",
     "maxResults": 12,
     "fuzzySearch": true,
@@ -57,7 +62,7 @@
       "title",
       "description",
       "keywords",
-      "faculty"
+      "category"
     ]
   },
   "admin": {
@@ -66,7 +71,14 @@
     "allowJsonEdit": true,
     "allowFileUpload": true,
     "maxFileSize": "5MB",
-    "allowedFileTypes": ["jpg", "jpeg", "png", "gif", "webp", "svg"],
+    "allowedFileTypes": [
+      "jpg",
+      "jpeg",
+      "png",
+      "gif",
+      "webp",
+      "svg"
+    ],
     "uploadsPath": "/images/uploads"
   },
   "maintenance": {
@@ -75,7 +87,9 @@
     "allowedIPs": []
   },
   "security": {
-    "allowedOrigins": ["https://proyectos.udd.cl"],
+    "allowedOrigins": [
+      "https://mi-sitio.com"
+    ],
     "rateLimit": {
       "enabled": true,
       "maxRequests": 100,

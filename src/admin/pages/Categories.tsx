@@ -13,7 +13,8 @@ export default function Categories() {
     queryKey: ['categories'],
     queryFn: async () => {
       const data = await FileManager.readCategories();
-      return data.categories;
+      // Asegurar que siempre retornamos un array
+      return Array.isArray(data?.categories) ? data.categories : [];
     },
   });
 
@@ -70,7 +71,7 @@ export default function Categories() {
         </Link>
       </div>
 
-      {categories.length === 0 ? (
+      {!Array.isArray(categories) || categories.length === 0 ? (
         <div className="empty-state">
           <FaFolder />
           <h3>No hay categorías</h3>

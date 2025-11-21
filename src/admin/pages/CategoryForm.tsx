@@ -100,9 +100,15 @@ export default function CategoryForm() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['categories'] });
       queryClient.invalidateQueries({ queryKey: ['stats'] });
+      
+      // Reinicializar motor de búsqueda para incluir nueva categoría
+      setTimeout(() => {
+        window.location.reload();
+      }, 500);
+      
       setSaveMessage({ 
         type: 'success', 
-        text: isEdit ? 'Categoría actualizada' : 'Categoría creada exitosamente' 
+        text: isEdit ? 'Categoría actualizada - Recargando...' : 'Categoría creada - Recargando para actualizar búsqueda...' 
       });
       setTimeout(() => navigate('/admin/categories'), 1500);
     },
@@ -130,13 +136,19 @@ export default function CategoryForm() {
   };
 
   const addField = () => {
+    // Generar ID más simple y consistente
+    const fieldCount = fields.length + 1;
+    const suggestedId = `campo_${fieldCount}`;
+    
     append({
-      id: `field_${Date.now()}`,
-      name: `field_${Date.now()}`,
-      label: '',
+      id: suggestedId,
+      name: suggestedId,
+      label: `Campo ${fieldCount}`,
       type: 'text',
       required: false,
-      searchable: false,
+      searchable: true,
+      placeholder: `Ingresa ${suggestedId}...`,
+      helpText: `Descripción del ${suggestedId}`
     });
   };
 

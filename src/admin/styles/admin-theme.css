@@ -1,0 +1,263 @@
+/* 
+ * TEMA FIJO CLARO PARA EL ADMIN PANEL
+ * Este archivo fuerza un tema claro siempre, independiente de la configuración del sistema
+ */
+
+/* Resetear cualquier preferencia de tema del sistema */
+@media (prefers-color-scheme: dark) {
+  /* Forzar tema claro incluso si el sistema prefiere oscuro */
+}
+
+/* Variables CSS para tema claro fijo */
+:root {
+  /* Colores principales del admin - TEMA CLARO FIJO */
+  --admin-bg-primary: #ffffff;
+  --admin-bg-secondary: #f8f9fa;
+  --admin-bg-tertiary: #f1f3f4;
+  --admin-bg-sidebar: #1a1a2e;
+  
+  /* Textos */
+  --admin-text-primary: #212529;
+  --admin-text-secondary: #6c757d;
+  --admin-text-muted: #868e96;
+  --admin-text-white: #ffffff;
+  
+  /* Bordes */
+  --admin-border-light: #e9ecef;
+  --admin-border-medium: #dee2e6;
+  --admin-border-dark: #adb5bd;
+  
+  /* Colores de acento */
+  --admin-accent-primary: #00ff88;
+  --admin-accent-secondary: #007bff;
+  --admin-success: #28a745;
+  --admin-danger: #dc3545;
+  --admin-warning: #ffc107;
+  --admin-info: #17a2b8;
+  
+  /* Sombras */
+  --admin-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
+  --admin-shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
+  --admin-shadow-lg: 0 8px 25px rgba(0, 0, 0, 0.2);
+  
+  /* Espaciado */
+  --admin-spacing-xs: 0.25rem;
+  --admin-spacing-sm: 0.5rem;
+  --admin-spacing-md: 1rem;
+  --admin-spacing-lg: 1.5rem;
+  --admin-spacing-xl: 2rem;
+  
+  /* Border radius */
+  --admin-radius-sm: 4px;
+  --admin-radius-md: 6px;
+  --admin-radius-lg: 8px;
+  --admin-radius-xl: 12px;
+}
+
+/* Aplicar tema claro a todo el contenedor admin */
+.admin-layout {
+  /* Forzar colores de tema claro */
+  color-scheme: light !important;
+}
+
+.admin-layout *,
+.admin-layout *::before,
+.admin-layout *::after {
+  /* Forzar colores de tema claro en todos los elementos */
+  color-scheme: light !important;
+}
+
+/* Contenedor principal del admin siempre con fondo claro */
+.admin-layout {
+  background: var(--admin-bg-secondary) !important;
+  color: var(--admin-text-primary) !important;
+}
+
+/* Contenido principal siempre claro */
+.admin-content {
+  background: var(--admin-bg-secondary) !important;
+  color: var(--admin-text-primary) !important;
+}
+
+/* Header siempre blanco */
+.admin-header {
+  background: var(--admin-bg-primary) !important;
+  color: var(--admin-text-primary) !important;
+  border-bottom: 1px solid var(--admin-border-light) !important;
+}
+
+/* Área de contenido de páginas */
+.admin-page-content {
+  background: var(--admin-bg-secondary) !important;
+  color: var(--admin-text-primary) !important;
+}
+
+/* Todas las secciones/tarjetas siempre blancas */
+.admin-section,
+.config-section,
+.ai-section,
+.page-form,
+.item-form,
+.category-form {
+  background: var(--admin-bg-primary) !important;
+  color: var(--admin-text-primary) !important;
+  border: 1px solid var(--admin-border-light) !important;
+}
+
+/* Inputs, selects y textareas siempre con fondo claro */
+input, 
+textarea, 
+select,
+.form-control,
+.admin-input {
+  background: var(--admin-bg-primary) !important;
+  color: var(--admin-text-primary) !important;
+  border: 2px solid var(--admin-border-medium) !important;
+}
+
+input:focus,
+textarea:focus,
+select:focus,
+.form-control:focus,
+.admin-input:focus {
+  background: var(--admin-bg-primary) !important;
+  color: var(--admin-text-primary) !important;
+  border-color: var(--admin-accent-secondary) !important;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25) !important;
+}
+
+/* Botones con colores consistentes */
+.admin-button-primary,
+.btn-primary {
+  background: var(--admin-accent-primary) !important;
+  color: var(--admin-text-primary) !important;
+  border: none !important;
+}
+
+.admin-button-secondary,
+.btn-secondary {
+  background: var(--admin-bg-tertiary) !important;
+  color: var(--admin-text-primary) !important;
+  border: 1px solid var(--admin-border-medium) !important;
+}
+
+.admin-button-danger,
+.btn-danger {
+  background: var(--admin-danger) !important;
+  color: var(--admin-text-white) !important;
+  border: none !important;
+}
+
+/* Tablas siempre con fondo claro */
+table,
+.admin-table,
+.table {
+  background: var(--admin-bg-primary) !important;
+  color: var(--admin-text-primary) !important;
+}
+
+table th,
+table td,
+.admin-table th,
+.admin-table td {
+  background: var(--admin-bg-primary) !important;
+  color: var(--admin-text-primary) !important;
+  border-color: var(--admin-border-light) !important;
+}
+
+/* Modales y overlays */
+.modal,
+.modal-content,
+.tooltip,
+.popover {
+  background: var(--admin-bg-primary) !important;
+  color: var(--admin-text-primary) !important;
+  border-color: var(--admin-border-light) !important;
+}
+
+/* Scrollbars con tema claro */
+.admin-layout ::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.admin-layout ::-webkit-scrollbar-track {
+  background: var(--admin-bg-tertiary) !important;
+}
+
+.admin-layout ::-webkit-scrollbar-thumb {
+  background: var(--admin-border-dark) !important;
+  border-radius: var(--admin-radius-sm);
+}
+
+.admin-layout ::-webkit-scrollbar-thumb:hover {
+  background: var(--admin-text-secondary) !important;
+}
+
+/* Estados de carga y placeholders */
+.loading-state,
+.empty-state,
+.error-state {
+  background: var(--admin-bg-primary) !important;
+  color: var(--admin-text-primary) !important;
+}
+
+/* Mensajes y alertas */
+.message,
+.alert,
+.notification {
+  background: var(--admin-bg-primary) !important;
+  color: var(--admin-text-primary) !important;
+  border-color: var(--admin-border-medium) !important;
+}
+
+.message.success,
+.alert-success {
+  background: #d4edda !important;
+  color: #155724 !important;
+  border-color: #c3e6cb !important;
+}
+
+.message.error,
+.alert-danger {
+  background: #f8d7da !important;
+  color: #721c24 !important;
+  border-color: #f5c6cb !important;
+}
+
+.message.warning,
+.alert-warning {
+  background: #fff3cd !important;
+  color: #856404 !important;
+  border-color: #ffeaa7 !important;
+}
+
+/* Anular cualquier tema oscuro que pueda estar aplicándose */
+@media (prefers-color-scheme: dark) {
+  .admin-layout,
+  .admin-layout * {
+    /* Forzar tema claro incluso si el sistema prefiere oscuro */
+    background-color: revert !important;
+    color: revert !important;
+  }
+  
+  /* Re-aplicar nuestros colores específicos */
+  .admin-layout {
+    background: var(--admin-bg-secondary) !important;
+    color: var(--admin-text-primary) !important;
+  }
+  
+  .admin-content {
+    background: var(--admin-bg-secondary) !important;
+  }
+  
+  .admin-header {
+    background: var(--admin-bg-primary) !important;
+  }
+}
+
+/* Asegurar que el sidebar mantenga su tema oscuro intencional */
+.admin-sidebar {
+  background: var(--admin-bg-sidebar) !important;
+  color: var(--admin-text-white) !important;
+}

@@ -160,20 +160,18 @@ function getFallbackResponse(query: string): SceneResponse {
     q.includes("quién eres") || 
     q.includes("quienes son") || 
     q.includes("quiénes son") ||
-    q.includes("que es udd") ||
-    q.includes("qué es udd") ||
-    q.includes("quienes somos") ||
-    q.includes("quiénes somos") ||
     q.includes("sobre ustedes") ||
     q.includes("cuentame de") ||
-    q.includes("cuéntame de")
+    q.includes("cuéntame de") ||
+    q.includes("quienes somos") ||
+    q.includes("quiénes somos")
   ) {
     return {
-      titulo: "¿Quiénes Somos?",
-      subtitulo: "Universidad del Desarrollo - Innovación y excelencia académica al servicio de Chile.",
+      titulo: "Acerca de Nosotros",
+      subtitulo: "Sitio web configurable con búsqueda inteligente y tecnología de IA.",
       proyectos: [
         { 
-          id: "quienes-somos",
+          id: "ejemplo_demo_1",
           frase: "Somos una universidad comprometida con la formación de profesionales de excelencia, impulsando la innovación, el emprendimiento y el desarrollo del país."
         }
       ]
@@ -199,45 +197,42 @@ function getFallbackResponse(query: string): SceneResponse {
     };
   }
 
-  if (q.includes("colegio") || q.includes("educación") || q.includes("educacion") || q.includes("escuela") || q.includes("estudiante")) {
+  if (q.includes("educación") || q.includes("educacion") || q.includes("aprender") || q.includes("curso") || q.includes("formación")) {
     return {
-      titulo: "Tecnología para el sector educativo",
-      subtitulo: "Sistemas integrales que facilitan la gestión y comunicación en instituciones educativas.",
+      titulo: "Servicios Educativos",
+      subtitulo: "Contenido y recursos educativos disponibles en nuestro sitio.",
       proyectos: [
-        { id: "ciento01" },
-        { id: "plataforma-educativa" }
+        { id: "ejemplo_demo_1" }
       ]
     };
   }
 
-  if (q.includes("gobierno") || q.includes("público") || q.includes("publico") || q.includes("municipal")) {
+  if (q.includes("servicio") || q.includes("servicios") || q.includes("público") || q.includes("publico")) {
     return {
-      titulo: "Soluciones para el sector público",
-      subtitulo: "Herramientas de visualización y gestión de datos para la toma de decisiones.",
+      titulo: "Nuestros Servicios",
+      subtitulo: "Descubre los servicios que ofrecemos a nuestros clientes.",
       proyectos: [
-        { id: "observatorio-maule" }
+        { id: "ejemplo_demo_1" }
       ]
     };
   }
 
   if (q.includes("negocio") || q.includes("empresa") || q.includes("ventas") || q.includes("analytics") || q.includes("dashboard")) {
     return {
-      titulo: "Inteligencia de negocios",
-      subtitulo: "Dashboards y herramientas para optimizar tus procesos empresariales.",
+      titulo: "Soluciones Empresariales",
+      subtitulo: "Herramientas y servicios para optimizar procesos de negocio.",
       proyectos: [
-        { id: "dashboard-analytics" }
+        { id: "ejemplo_demo_1" }
       ]
     };
   }
 
-  // Caso por defecto: mostrar proyectos principales
+  // Caso por defecto: mostrar contenido principal
   return {
-    titulo: "Proyectos Innovadores UDD",
-    subtitulo: "Descubre algunos de nuestros proyectos tecnológicos y educativos.",
+    titulo: "Contenido Destacado",
+    subtitulo: "Explora nuestro contenido y servicios disponibles.",
     proyectos: [
-      { id: "ciento01" },
-      { id: "observatorio-maule" },
-      { id: "plataforma-educativa" }
+      { id: "ejemplo_demo_1" }
     ]
   };
 }

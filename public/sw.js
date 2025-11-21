@@ -1,4 +1,4 @@
-const CACHE_NAME = 'udd-proyectos-v1';
+const CACHE_NAME = 'sitio-web-v1';
 const urlsToCache = [
   '/',
   '/index.html',

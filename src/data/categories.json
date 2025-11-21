@@ -7,7 +7,7 @@
       "icon": "FaLightbulb",
       "description": "Proyectos estudiantiles innovadores",
       "itemsFile": "items/proyectos.json",
-      "searchWeight": 1.0,
+      "searchWeight": 1,
       "displayOrder": 1,
       "fields": [
         {

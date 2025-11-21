@@ -63,11 +63,17 @@ export default function ItemForm() {
       queryClient.invalidateQueries({ queryKey: ['all-items'] });
       queryClient.invalidateQueries({ queryKey: ['stats'] });
       queryClient.invalidateQueries({ queryKey: ['recentItems'] });
+      
       setSaveMessage({ 
         type: 'success', 
-        text: isEdit ? 'Item actualizado' : 'Item creado exitosamente' 
+        text: isEdit ? 'Item actualizado - Reindexando búsqueda...' : 'Item creado - Reindexando búsqueda...' 
       });
-      setTimeout(() => navigate('/admin/items'), 1500);
+      
+      // Trigger reindexación del motor de búsqueda
+      setTimeout(() => {
+        window.dispatchEvent(new CustomEvent('reindexSearch'));
+        navigate('/admin/items');
+      }, 1000);
     },
     onError: (error: Error) => {
       setSaveMessage({ type: 'error', text: `Error: ${error.message}` });

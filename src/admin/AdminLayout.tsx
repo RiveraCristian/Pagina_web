@@ -9,16 +9,17 @@ import {
   FaFolder,
   FaFileAlt,
   FaPalette,
-  FaCog,
   FaEye,
   FaSave,
   FaTimes,
   FaSignOutAlt,
   FaRobot,
   FaGlobe,
+  FaCog,
 } from 'react-icons/fa';
 import { FileManager } from './utils/fileManager';
 import { logout } from './utils/auth';
+import './styles/admin-theme.css';
 import './styles/AdminLayout.css';
 
 export function AdminLayout() {
@@ -60,7 +61,7 @@ export function AdminLayout() {
   };
 
   return (
-    <div className="admin-layout">
+    <div className="admin-layout admin-light-theme">
       {/* Sidebar */}
       <aside className="admin-sidebar">
         <div className="admin-logo">
@@ -89,6 +90,11 @@ export function AdminLayout() {
             <span>Páginas</span>
           </NavLink>
 
+          <NavLink to="/admin/config" className={({ isActive }: { isActive: boolean }) => (isActive ? 'active' : '')}>
+            <FaCog />
+            <span>Configuración</span>
+          </NavLink>
+
           <NavLink to="/admin/design" className={({ isActive }: { isActive: boolean }) => (isActive ? 'active' : '')}>
             <FaPalette />
             <span>Diseño</span>
@@ -99,9 +105,9 @@ export function AdminLayout() {
             <span>IA y Búsqueda</span>
           </NavLink>
 
-          <NavLink to="/admin/settings" className={({ isActive }: { isActive: boolean }) => (isActive ? 'active' : '')}>
-            <FaCog />
-            <span>Configuración</span>
+          <NavLink to="/admin/search-engine" className={({ isActive }: { isActive: boolean }) => (isActive ? 'active' : '')}>
+            <FaRobot />
+            <span>Motor de Búsqueda</span>
           </NavLink>
         </nav>
 
@@ -122,7 +128,7 @@ export function AdminLayout() {
             <span>Ver Sitio</span>
           </Link>
 
-          <button onClick={handleLogout} className="logout-button">
+          <button onClick={handleLogout} className="logout-button admin-button-danger">
             <FaSignOutAlt />
             <span>Cerrar Sesión</span>
           </button>
