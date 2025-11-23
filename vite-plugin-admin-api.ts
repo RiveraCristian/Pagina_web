@@ -77,42 +77,53 @@ export function adminApiPlugin(options: AdminApiOptions = {}): Plugin {
 
       // ==================== API ENDPOINTS ====================
 
-      // POST /api/upload - Upload de imágenes
+      // POST /api/upload - Upload de imágenes (Base64 para admin)
       server.middlewares.use('/api/upload', async (req, res, next) => {
         if (req.method !== 'POST') return next();
         
         try {
-          const { fileName, fileData, fileType } = await readBody(req);
+          console.log('📤 Upload request received - Content-Type:', req.headers['content-type']);
           
-          // Validar tipo de archivo
-          const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/svg+xml'];
-          if (!allowedTypes.includes(fileType)) {
-            return sendError(res, 'Tipo de archivo no soportado', 400);
+          // Verificar si es JSON (base64) o FormData
+          const contentType = req.headers['content-type'] || '';
+          
+          if (contentType.includes('application/json')) {
+            // Manejo de upload base64 desde admin
+            const { fileName, fileData, fileType } = await readBody(req);
+            
+            // Validar tipo de archivo
+            const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/svg+xml'];
+            if (!allowedTypes.includes(fileType)) {
+              return sendError(res, 'Tipo de archivo no soportado', 400);
+            }
+            
+            // Crear directorio de uploads si no existe
+            const uploadsDir = path.join(process.cwd(), 'public', 'uploads');
+            await ensureDir(uploadsDir);
+            
+            // Generar nombre único
+            const timestamp = Date.now();
+            const ext = path.extname(fileName);
+            const uniqueFileName = `logo_${timestamp}${ext}`;
+            const filePath = path.join(uploadsDir, uniqueFileName);
+            
+            // Convertir base64 a buffer y guardar
+            const base64Data = fileData.split(',')[1];
+            const buffer = Buffer.from(base64Data, 'base64');
+            await fs.writeFile(filePath, buffer);
+            
+            const publicPath = `/uploads/${uniqueFileName}`;
+            console.log('✅ Image uploaded (base64):', publicPath);
+            
+            sendJSON(res, {
+              success: true,
+              path: publicPath,
+              fileName: uniqueFileName
+            });
+          } else {
+            // Redirigir a endpoint de FormData
+            return next();
           }
-          
-          // Crear directorio de uploads si no existe
-          const uploadsDir = path.join(process.cwd(), 'public', 'uploads');
-          await ensureDir(uploadsDir);
-          
-          // Generar nombre único
-          const timestamp = Date.now();
-          const ext = path.extname(fileName);
-          const uniqueFileName = `logo_${timestamp}${ext}`;
-          const filePath = path.join(uploadsDir, uniqueFileName);
-          
-          // Convertir base64 a buffer y guardar
-          const base64Data = fileData.split(',')[1];
-          const buffer = Buffer.from(base64Data, 'base64');
-          await fs.writeFile(filePath, buffer);
-          
-          const publicPath = `/uploads/${uniqueFileName}`;
-          console.log('✅ Image uploaded:', publicPath);
-          
-          sendJSON(res, {
-            success: true,
-            path: publicPath,
-            fileName: uniqueFileName
-          });
         } catch (error: any) {
           console.error('❌ Upload error:', error);
           sendError(res, `Error al subir archivo: ${error.message}`);
@@ -222,14 +233,13 @@ export function adminApiPlugin(options: AdminApiOptions = {}): Plugin {
       });
 
       // GET /api/items/:categoryId - Leer items de una categoría
-      server.middlewares.use('/api/items/', async (req, res, next) => {
+      server.middlewares.use(async (req, res, next) => {
         if (req.method !== 'GET') return next();
-
-        const match = req.url?.match(/^\/api\/items\/([^/]+)$/);
+        
+        const match = req.url?.match(/^\/api\/items\/([^/?]+)(?:\?.*)?$/);
         if (!match) return next();
 
-        const categoryId = match[1];
-
+        const categoryId = decodeURIComponent(match[1]);
         try {
           const itemsPath = path.join(dataDir, 'items', `${categoryId}.json`);
           
@@ -239,21 +249,22 @@ export function adminApiPlugin(options: AdminApiOptions = {}): Plugin {
           }
 
           const data = await fs.readFile(itemsPath, 'utf-8');
-          sendJSON(res, JSON.parse(data));
+          const parsed = JSON.parse(data);
+          sendJSON(res, parsed);
         } catch (error: any) {
+          console.error(`❌ Error reading items for ${categoryId}:`, error);
           sendError(res, `Failed to read items for ${categoryId}: ${error.message}`);
         }
       });
 
       // POST /api/save-items/:categoryId - Guardar items de una categoría
-      server.middlewares.use('/api/save-items/', async (req, res, next) => {
+      server.middlewares.use(async (req, res, next) => {
         if (req.method !== 'POST') return next();
 
-        const match = req.url?.match(/^\/api\/save-items\/([^/]+)$/);
+        const match = req.url?.match(/^\/api\/save-items\/([^/?]+)(?:\?.*)?$/);
         if (!match) return next();
 
-        const categoryId = match[1];
-
+        const categoryId = decodeURIComponent(match[1]);
         try {
           const items = await readBody(req);
           const itemsDir = path.join(dataDir, 'items');
@@ -262,9 +273,10 @@ export function adminApiPlugin(options: AdminApiOptions = {}): Plugin {
           await ensureDir(itemsDir);
           await fs.writeFile(itemsPath, JSON.stringify(items, null, 2), 'utf-8');
           
-          console.log(`✅ Items for ${categoryId} saved successfully`);
+          console.log(`✅ Saved ${items.items?.length || 0} items to ${categoryId}.json`);
           sendJSON(res, { success: true, message: `Items for ${categoryId} saved` });
         } catch (error: any) {
+          console.error(`❌ Error saving items for ${categoryId}:`, error);
           sendError(res, `Failed to save items for ${categoryId}: ${error.message}`);
         }
       });
@@ -646,9 +658,36 @@ export function adminApiPlugin(options: AdminApiOptions = {}): Plugin {
         }
       });
 
+      // Solo loguear operaciones importantes
+      server.middlewares.use((req, res, next) => {
+        if (req.url?.includes('save-') || req.url?.includes('upload')) {
+          console.log(`💾 ${req.method} ${req.url}`);
+        }
+        next();
+      });
+
+      // TEST endpoint para verificar que las rutas funcionan
+      server.middlewares.use('/api/test', async (req, res, next) => {
+        if (req.method !== 'GET') return next();
+        
+        sendJSON(res, {
+          status: 'API Working',
+          method: req.method,
+          url: req.url,
+          timestamp: new Date().toISOString()
+        });
+      });
+
       console.log('🔧 Admin API plugin configured');
       console.log(`   Data directory: ${dataDir}`);
       console.log(`   Uploads directory: ${uploadsDir}`);
+      console.log(`   API endpoints configured:`);
+      console.log(`     GET  /api/test`);
+      console.log(`     GET  /api/categories`);
+      console.log(`     GET  /api/items/:categoryId`);
+      console.log(`     POST /api/save-items/:categoryId`);
+      console.log(`     POST /api/upload`);
+      console.log(`     POST /api/upload/image`);
     },
   };
 }

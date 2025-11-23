@@ -1,0 +1,25 @@
+{
+  "items": [
+    {
+      "categoryId": "nosotros",
+      "status": "published",
+      "data": {
+        "seccion": "Quiénes Somos",
+        "titulo": "Quienes Somos",
+        "subtitulo": "Construyendo el Futuro con Tecnologia",
+        "contenido_principal": "Colabi es una consultora de desarrollo tecnológico y educación que impulsa la innovación a través de tecnología avanzada y diseño estratégico. Creamos soluciones a medida para empresas, instituciones y proyectos educativos, integrando herramientas digitales y experiencias interactivas para transformar ideas en realidades.",
+        "contenido_secundario": "Exploramos la intersección entre el conocimiento y la tecnología como un territorio fértil para la creatividad y el cambio. No solo desarrollamos herramientas, sino que articulamos ecosistemas de aprendizaje y transformación, donde la inteligencia digital y la sensibilidad humana convergen en soluciones elegantes, intuitivas y eficaces.",
+        "galeria_imagenes": "",
+        "video_youtube": "https://www.youtube.com/watch?v=qjsrHutfKVA",
+        "enlace_externo": "https://colabi.tech/",
+        "texto_enlace": "Pagina Web",
+        "datos_contacto": "{\"telefono\":\"+56123456789\"}",
+        "orden_visualizacion": 1,
+        "keywords": "Tecnologia, Inteligencia Artificial, nosotros, acerca de nosotros, quienes somos, sobre nosotros, empresa, consultora"
+      },
+      "id": "1763739046603-7dsr8jd",
+      "createdAt": "2025-11-21T15:30:46.603Z",
+      "updatedAt": "2025-11-21T15:30:46.603Z"
+    }
+  ]
+}

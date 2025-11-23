@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Directo - Nosotros</title>
+    <style>
+        body { font-family: monospace; padding: 20px; background: #1a1a1a; color: white; }
+        button { padding: 15px 30px; margin: 10px; background: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; }
+        button:hover { background: #45a049; }
+        .result { background: #2a2a2a; margin: 20px 0; padding: 20px; border-radius: 10px; }
+        .success { border-left: 5px solid #4CAF50; }
+        .error { border-left: 5px solid #f44336; }
+        pre { background: #1e1e1e; padding: 15px; border-radius: 5px; overflow-x: auto; white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <h1>🔍 Test Directo: Búsqueda "Nosotros"</h1>
+    
+    <button onclick="testAll()" style="background: #2196F3; font-size: 20px; padding: 20px 40px;">
+        🚀 EJECUTAR TEST COMPLETO
+    </button>
+    
+    <button onclick="clearResults()">🗑️ Limpiar</button>
+    
+    <div id="results"></div>
+
+    <script>
+        const resultsContainer = document.getElementById('results');
+        
+        function log(message, type = 'info') {
+            const div = document.createElement('div');
+            div.className = `result ${type}`;
+            div.innerHTML = `<pre>${message}</pre>`;
+            resultsContainer.appendChild(div);
+            console.log(message);
+        }
+        
+        function clearResults() {
+            resultsContainer.innerHTML = '';
+        }
+        
+        async function testAll() {
+            clearResults();
+            log('🚀 INICIANDO TEST COMPLETO DE BÚSQUEDA "NOSOTROS"', 'info');
+            
+            try {
+                // Test 1: Verificar API directa
+                log('\n=== 1. VERIFICAR API ===');
+                const apiResponse = await fetch('/api/items/nosotros');
+                const apiData = await apiResponse.json();
+                
+                if (apiData.items && apiData.items.length > 0) {
+                    const item = apiData.items[0];
+                    const keywords = item.data.keywords || '';
+                    log(`✅ API funciona - Keywords: "${keywords}"`);
+                    
+                    if (keywords.includes('nosotros')) {
+                        log('✅ La palabra "nosotros" SÍ está en keywords');
+                    } else {
+                        log('❌ La palabra "nosotros" NO está en keywords', 'error');
+                        return;
+                    }
+                } else {
+                    log('❌ API no retorna datos', 'error');
+                    return;
+                }
+                
+                // Test 2: Crear SearchEngine fresco
+                log('\n=== 2. CREAR SEARCHENGINE FRESCO ===');
+                
+                // Importar SearchEngine
+                const { searchEngine } = await import('./src/services/searchEngine.js');
+                
+                // Crear datos de prueba con las keywords actualizadas
+                const testData = apiData.items;
+                
+                log(`🔄 Indexando ${testData.length} items...`);
+                searchEngine.indexContent(testData);
+                
+                const indexSize = searchEngine.getIndexSize();
+                log(`📊 Índice creado: ${indexSize} tokens`);
+                
+                // Test 3: Probar búsquedas
+                log('\n=== 3. PROBAR BÚSQUEDAS ===');
+                
+                const testQueries = ['nosotros', 'quienes', 'empresa', 'consultora', 'colabi'];
+                
+                for (const query of testQueries) {
+                    const results = searchEngine.search(query, { limit: 3, threshold: 0.0 });
+                    
+                    if (results.length > 0) {
+                        log(`✅ "${query}": ${results.length} resultado(s)`, 'success');
+                        results.forEach((result, i) => {
+                            log(`   ${i+1}. Score: ${result.score.toFixed(3)}`);
+                        });
+                    } else {
+                        log(`❌ "${query}": 0 resultados`, 'error');
+                    }
+                }
+                
+                // Test 4: Análisis de tokens
+                log('\n=== 4. ANÁLISIS DE TOKENS ===');
+                const debugInfo = searchEngine.debugIndex();
+                log(`📊 Información del índice:`);
+                log(`   - Contenido: ${debugInfo.contentCount} items`);
+                log(`   - Tokens: ${debugInfo.tokenCount} únicos`);
+                log(`   - Tokens ejemplo: ${debugInfo.sampleTokens.join(', ')}`);
+                
+                // Verificar si 'nosotros' está en los tokens
+                if (debugInfo.sampleTokens.includes('nosotros') || 
+                    Array.from(searchEngine.index?.keys() || []).includes('nosotros')) {
+                    log('✅ Token "nosotros" encontrado en el índice', 'success');
+                } else {
+                    log('❌ Token "nosotros" NO encontrado en el índice', 'error');
+                    
+                    // Mostrar todos los tokens para debug
+                    const allTokens = Array.from(searchEngine.index?.keys() || []);
+                    const nosotrosLike = allTokens.filter(t => t.includes('nosotro') || t.includes('empresa') || t.includes('quiene'));
+                    log(`🔍 Tokens similares encontrados: ${nosotrosLike.join(', ')}`);
+                }
+                
+                log('\n🎉 TEST COMPLETADO');
+                
+            } catch (error) {
+                log(`❌ ERROR EN EL TEST: ${error.message}\\n${error.stack}`, 'error');
+            }
+        }
+        
+        // Auto-ejecutar después de un momento
+        setTimeout(() => {
+            log('💡 Haz clic en "EJECUTAR TEST COMPLETO" para probar');
+        }, 1000);
+    </script>
+</body>
+</html>

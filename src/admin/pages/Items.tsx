@@ -20,17 +20,30 @@ export default function Items() {
   const categories = categoriesData?.categories || [];
 
   // Cargar items de todas las categorías
-  const { data: allItems = [], isLoading } = useQuery({
-    queryKey: ['all-items'],
+  const { data: allItems = [], isLoading, error, refetch } = useQuery({
+    queryKey: ['all-items', selectedCategory],
     queryFn: async () => {
+      console.log('🔄 Loading items for all categories...');
       const items: Item[] = [];
+      
       for (const category of categories) {
-        const categoryItems = await FileManager.readItems(category.id);
-        items.push(...categoryItems);
+        try {
+          console.log(`📁 Loading items for category: ${category.id}`);
+          const categoryItems = await FileManager.readItems(category.id);
+          console.log(`✅ Loaded ${categoryItems.length} items for ${category.id}`);
+          items.push(...categoryItems);
+        } catch (error) {
+          console.error(`❌ Error loading items for ${category.id}:`, error);
+        }
       }
+      
+      console.log(`🎯 Total items loaded: ${items.length}`);
       return items;
     },
     enabled: categories.length > 0,
+    refetchOnWindowFocus: true,
+    refetchInterval: 30000, // Auto-refresh cada 30 segundos
+    staleTime: 10000, // Considera los datos stale después de 10 segundos
   });
 
   // Filtrar items
@@ -91,6 +104,20 @@ export default function Items() {
         <div className="items-loading">
           <FaSpinner className="spin" />
           Cargando contenido...
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="admin-page">
+        <h1 className="admin-page-title">Contenido</h1>
+        <div className="error-state">
+          <p style={{ color: 'red' }}>Error cargando contenido: {error.message}</p>
+          <button onClick={() => refetch()} className="admin-button primary">
+            Reintentar
+          </button>
         </div>
       </div>
     );

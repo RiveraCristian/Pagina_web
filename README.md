@@ -1,39 +1,39 @@
-# 🚀 Framework CMS Self-Hosted + Single Page Application
+# 🚀 Colabi Framework - CMS Self-Hosted
 
 ## ⚡ ¿Qué es esto?
 
-Este proyecto incluye **DOS sistemas en uno:**
+**Framework CMS genérico** con panel de administración completo y búsqueda avanzada por voz. Sistema 100% flexible sin base de datos que permite crear cualquier tipo de sitio web.
 
-### 1️⃣ **Framework CMS Genérico** (Panel de Administración)
-Un sistema de gestión de contenido **100% flexible** y sin base de datos que te permite crear **CUALQUIER tipo de sitio web** mediante categorías personalizables.
+## ✨ Características Principales
 
-**✨ Características del Framework:**
-- ✅ **100% Genérico** - No limitado a ningún sector específico
-- ✅ **Sin Base de Datos** - Todo en archivos JSON versionables con Git
-- ✅ **Schema Builder** - Crea categorías con 22 tipos de campos diferentes
-- ✅ **Formularios Dinámicos** - Se generan automáticamente según tu configuración
-- ✅ **Editor Visual de Diseño** - Personaliza colores, fuentes y efectos
-- ✅ **Autenticación** - Panel protegido con login
-- ✅ **TypeScript** - Tipado completo y validaciones en tiempo real
-- ✅ **Modern Stack** - React 19, Vite 7, TanStack Query, React Hook Form
+- ✅ **100% Genérico** - Crear cualquier tipo de sitio web
+- ✅ **Sin Base de Datos** - Todo en archivos JSON versionables
+- ✅ **Schema Builder** - 22 tipos de campos personalizables
+- ✅ **Búsqueda Avanzada** - Motor de búsqueda con IA y por voz
+- ✅ **Panel Admin Completo** - Gestión visual de contenido
+- ✅ **Modern Stack** - React 19, TypeScript, Vite 7
 
-**📦 Tipos de sitios que puedes crear:**
-- Sitios corporativos (empresas, agencias)
-- E-commerce (tiendas online)
-- Blogs y revistas
-- Portfolios personales
-- Instituciones educativas
-- Clínicas y hospitales
-- ONGs y fundaciones
-- Restaurantes
-- Inmobiliarias
-- **¡Y cualquier cosa que imagines!**
+## 📚 Documentación
 
-**🔗 Documentación del Framework:**
-- [README_FRAMEWORK_GENERICO.md](./README_FRAMEWORK_GENERICO.md) - Guía completa
-- [QUICK_START.md](./QUICK_START.md) - Inicio rápido por tipo de sitio
-- [EJEMPLOS_CATEGORIAS.md](./EJEMPLOS_CATEGORIAS.md) - Ejemplos detallados
-- [FRAMEWORK_SELF_HOSTED.md](./FRAMEWORK_SELF_HOSTED.md) - Documentación técnica
+Toda la documentación ha sido organizada en la carpeta [`docs/`](./docs/):
+
+### 🚀 **Inicio Rápido**
+- **[Guía de Inicio](./docs/guias/QUICK_START.md)** - Comenzar en 5 minutos
+- **[Manual Completo](./docs/guias/USER_GUIDE.md)** - Guía detallada del usuario
+
+### 🎨 **Administración** 
+- **[Panel Admin](./docs/admin/ADMIN_README.md)** - Guía completa del panel
+- **[Agregar Contenido](./docs/guias/GUIA_AGREGAR_CONTENIDO.md)** - Paso a paso
+
+### 🔧 **Técnica**
+- **[Arquitectura](./docs/arquitectura/FRAMEWORK_SELF_HOSTED.md)** - Documentación técnica
+- **[Estructura](./docs/arquitectura/PROJECT_STRUCTURE.md)** - Organización del código
+
+### 🚨 **Solución de Problemas**
+- **[Troubleshooting](./docs/troubleshooting/TROUBLESHOOTING_CONTENIDO.md)** - Problemas comunes
+- **[Diagnósticos](./docs/troubleshooting/)** - Soluciones específicas
+
+> 📖 **[Ver toda la documentación organizada](./docs/README.md)**
 
 ---
 

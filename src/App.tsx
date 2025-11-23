@@ -130,15 +130,15 @@ function App() {
       return;
     }
 
-    // Verificar que los proyectos estén cargados
-    if (projectsLoading) {
-      setError('Cargando datos de proyectos, por favor espera un momento...');
+    // Verificar que el sistema esté listo (AI inicializado)
+    if (!aiInitialized) {
+      setError('Inicializando sistema de búsqueda, por favor espera un momento...');
       return;
     }
 
-    if (!PROJECTS || PROJECTS.length === 0) {
-      setError('No hay proyectos disponibles en este momento.');
-      return;
+    // Los proyectos son opcionales - el sistema puede funcionar con contenido del admin panel
+    if (projectsLoading) {
+      console.log('⚠️ Proyectos aún cargando, pero permitiendo búsqueda con contenido disponible');
     }
 
     // Detect XSS attempts
@@ -188,6 +188,8 @@ function App() {
 
       // Resolver los proyectos cruzando con el catálogo local
       console.log('📂 Proyectos disponibles:', PROJECTS.length, 'proyectos');
+      console.log('🎯 Proyectos solicitados por IA:', sceneResponse.proyectos.length, 'proyectos');
+      
       const resolvedProjects: ResolvedSceneProject[] = sceneResponse.proyectos
         .map((sceneProject) => {
           const project = PROJECTS.find((p) => p.id === sceneProject.id);
@@ -219,10 +221,18 @@ function App() {
           return resolved;
         })
         .filter(Boolean) as ResolvedSceneProject[];
+      
+      // Log para consultas sin proyectos (como "nosotros")
+      if (sceneResponse.proyectos.length === 0) {
+        console.log('ℹ️ Esta consulta no requiere proyectos (ej: información corporativa)');
+      }
 
       const resolvedScene = {
         titulo: sceneResponse.titulo,
         subtitulo: sceneResponse.subtitulo,
+        contenido: sceneResponse.contenido, // Para tarjeta corporativa
+        enlaces: sceneResponse.enlaces, // Enlaces externos
+        contacto: sceneResponse.contacto, // Información de contacto
         proyectos: resolvedProjects
       };
 

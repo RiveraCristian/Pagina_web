@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug SearchEngine</title>
+    <style>
+        body { font-family: monospace; padding: 20px; background: #1a1a1a; color: white; }
+        .test { background: #2a2a2a; margin: 10px 0; padding: 15px; border-radius: 5px; }
+        button { padding: 10px; margin: 5px; background: #4CAF50; color: white; border: none; border-radius: 3px; cursor: pointer; }
+        pre { background: #1e1e1e; padding: 10px; border-radius: 3px; overflow-x: auto; }
+        .error { background: #d32f2f; }
+        .success { background: #388e3c; }
+    </style>
+</head>
+<body>
+    <h1>Debug SearchEngine Connection</h1>
+    
+    <div class="test">
+        <h3>Test 1: API Directo</h3>
+        <button onclick="testAPI()">Probar /api/items/nosotros</button>
+        <pre id="api-result">Resultado aparecerá aquí...</pre>
+    </div>
+
+    <div class="test">
+        <h3>Test 2: Simular Carga useAI</h3>
+        <button onclick="simulateUseAI()">Simular carga de categorías</button>
+        <pre id="useai-result">Resultado aparecerá aquí...</pre>
+    </div>
+
+    <div class="test">
+        <h3>Test 3: SearchEngine Direct</h3>
+        <button onclick="testSearchEngineDirect()">Probar SearchEngine directamente</button>
+        <pre id="search-result">Resultado aparecerá aquí...</pre>
+    </div>
+
+    <script type="module">
+        window.testResults = {};
+
+        window.testAPI = async function() {
+            const resultEl = document.getElementById('api-result');
+            resultEl.textContent = 'Cargando...';
+            
+            try {
+                const response = await fetch('/api/items/nosotros');
+                const data = await response.json();
+                
+                resultEl.textContent = JSON.stringify(data, null, 2);
+                resultEl.className = 'success';
+                
+                window.testResults.apiData = data;
+                console.log('API Data:', data);
+            } catch (error) {
+                resultEl.textContent = `Error: ${error.message}`;
+                resultEl.className = 'error';
+            }
+        };
+
+        window.simulateUseAI = async function() {
+            const resultEl = document.getElementById('useai-result');
+            resultEl.textContent = 'Simulando carga de useAI...';
+            
+            try {
+                // Simular el proceso exacto de useAI
+                let knowledgeBase = [];
+                
+                // 1. Cargar categorías
+                const categoriesResponse = await fetch('/api/categories');
+                const categoriesData = await categoriesResponse.json();
+                resultEl.textContent += `\n1. Categorías cargadas: ${categoriesData.categories.length}`;
+                
+                // 2. Cargar items de cada categoría
+                for (const category of categoriesData.categories) {
+                    const itemsResponse = await fetch(`/api/items/${category.id}`);
+                    const categoryItems = await itemsResponse.json();
+                    const items = categoryItems.items || [];
+                    knowledgeBase.push(...items);
+                    
+                    resultEl.textContent += `\n   - ${category.id}: ${items.length} items`;
+                }
+                
+                resultEl.textContent += `\n\n2. Total items en knowledgeBase: ${knowledgeBase.length}`;
+                
+                // 3. Mostrar estructura de items
+                knowledgeBase.forEach((item, idx) => {
+                    const data = item.data || item;
+                    resultEl.textContent += `\n   ${idx}: categoryId=${item.categoryId}, status=${item.status}, titulo=${data.titulo || 'N/A'}`;
+                });
+                
+                // 4. Simular inicialización de searchEngine
+                const { searchEngine } = await import('./src/services/searchEngine.js');
+                
+                resultEl.textContent += `\n\n3. Inicializando SearchEngine...`;
+                searchEngine.indexContent(knowledgeBase);
+                
+                resultEl.textContent += `\n   - Index size: ${searchEngine.getIndexSize()}`;
+                resultEl.textContent += `\n   - Debug info: ${JSON.stringify(searchEngine.debugIndex(), null, 2)}`;
+                
+                // 5. Probar búsqueda
+                const searchResults = searchEngine.search('nosotros', { limit: 5, threshold: 0.0 });
+                resultEl.textContent += `\n\n4. Búsqueda 'nosotros': ${searchResults.length} resultados`;
+                
+                searchResults.forEach((result, i) => {
+                    resultEl.textContent += `\n   ${i+1}. Score: ${result.score.toFixed(3)} - ${JSON.stringify(result.content).substring(0, 100)}...`;
+                });
+                
+                resultEl.className = 'success';
+                window.testResults.simulationData = { knowledgeBase, searchResults };
+                
+            } catch (error) {
+                resultEl.textContent += `\nERROR: ${error.message}\n${error.stack}`;
+                resultEl.className = 'error';
+            }
+        };
+
+        window.testSearchEngineDirect = async function() {
+            const resultEl = document.getElementById('search-result');
+            resultEl.textContent = 'Probando SearchEngine directo...';
+            
+            try {
+                // Importar SearchEngine directamente
+                const { searchEngine } = await import('./src/services/searchEngine.js');
+                
+                // Crear datos de prueba con la estructura exacta
+                const testData = [
+                    {
+                        "categoryId": "nosotros",
+                        "status": "published",
+                        "data": {
+                            "seccion": "Quiénes Somos",
+                            "titulo": "Quienes Somos",
+                            "subtitulo": "Construyendo el Futuro con Tecnologia",
+                            "contenido_principal": "Colabi es una consultora de desarrollo tecnológico y educación que impulsa la innovación a través de tecnología avanzada y diseño estratégico.",
+                            "contenido_secundario": "Exploramos la intersección entre el conocimiento y la tecnología...",
+                            "keywords": "Tecnologia, Inteligencia Artificial"
+                        },
+                        "id": "test-item",
+                        "createdAt": "2025-11-21T15:30:46.603Z"
+                    }
+                ];
+                
+                resultEl.textContent += `\n1. Datos de prueba creados: ${testData.length} items`;
+                
+                // Indexar
+                searchEngine.indexContent(testData);
+                resultEl.textContent += `\n2. Contenido indexado`;
+                resultEl.textContent += `\n   - Index size: ${searchEngine.getIndexSize()}`;
+                resultEl.textContent += `\n   - Debug: ${JSON.stringify(searchEngine.debugIndex(), null, 2)}`;
+                
+                // Probar búsquedas
+                const queries = ['nosotros', 'quienes', 'colabi', 'tecnologia'];
+                
+                for (const query of queries) {
+                    const results = searchEngine.search(query, { limit: 5, threshold: 0.0 });
+                    resultEl.textContent += `\n\n3. Búsqueda "${query}": ${results.length} resultados`;
+                    
+                    results.forEach((result, i) => {
+                        resultEl.textContent += `\n   ${i+1}. Score: ${result.score.toFixed(3)}`;
+                        resultEl.textContent += `\n      Content: ${JSON.stringify(result.content, null, 2)}`;
+                    });
+                }
+                
+                resultEl.className = 'success';
+                
+            } catch (error) {
+                resultEl.textContent += `\nERROR: ${error.message}\n${error.stack}`;
+                resultEl.className = 'error';
+            }
+        };
+
+        // Auto-ejecutar primera prueba
+        window.addEventListener('load', () => {
+            setTimeout(() => window.testAPI(), 1000);
+        });
+    </script>
+</body>
+</html>

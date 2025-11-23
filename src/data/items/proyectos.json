@@ -2,8 +2,8 @@
   "items": [
     {
       "id": "ejemplo_demo_1",
-      "categoryId": "proyectos", 
-      "status": "draft",
+      "categoryId": "proyectos",
+      "status": "published",
       "createdAt": "2025-11-21T00:00:00.000Z",
       "updatedAt": "2025-11-21T00:00:00.000Z",
       "data": {
@@ -17,6 +17,26 @@
         "tecnologias": "React, TypeScript, Vite",
         "destacado": false
       }
+    },
+    {
+      "categoryId": "proyectos",
+      "status": "published",
+      "data": {
+        "titulo": "Ciento-01",
+        "descripcion": "Programación en papel - Una metodología innovadora para aprender lógica de programación",
+        "descripcionLarga": "Ciento-01 es una plataforma educativa que enseña programación utilizando metodologías en papel, permitiendo a los estudiantes desarrollar habilidades de lógica computacional de manera táctil y visual.",
+        "categoria": "educacion",
+        "imagen": "/img/ciento01-placeholder.jpg",
+        "enlace": "https://ciento01.colabi.tech",
+        "github": "",
+        "tecnologias": "Pedagogía, Lógica, Programación",
+        "destacado": true,
+        "año": 2025,
+        "palabrasClave": "Programación, Educación, Lógica, Metodología"
+      },
+      "id": "1763743145668-fmoy9ms",
+      "createdAt": "2025-11-21T16:39:05.668Z",
+      "updatedAt": "2025-11-21T16:39:05.668Z"
     }
   ]
 }

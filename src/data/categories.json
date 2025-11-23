@@ -19,7 +19,10 @@
           "searchable": true,
           "maxLength": 100,
           "placeholder": "Ej: Sistema de Riego Inteligente",
-          "helpText": "Nombre corto y descriptivo del proyecto"
+          "helpText": "Nombre corto y descriptivo del proyecto",
+          "validation": {
+            "maxLength": null
+          }
         },
         {
           "id": "description",
@@ -31,26 +34,10 @@
           "maxLength": 500,
           "rows": 4,
           "placeholder": "Describe el proyecto en detalle...",
-          "helpText": "Explica qué hace el proyecto y su propósito"
-        },
-        {
-          "id": "faculty",
-          "name": "faculty",
-          "label": "Facultad",
-          "type": "select",
-          "required": true,
-          "searchable": true,
-          "options": [
-            "Ingeniería",
-            "Diseño",
-            "Medicina",
-            "Arquitectura",
-            "Negocios",
-            "Comunicación",
-            "Derecho",
-            "Psicología"
-          ],
-          "helpText": "Facultad responsable del proyecto"
+          "helpText": "Explica qué hace el proyecto y su propósito",
+          "validation": {
+            "maxLength": null
+          }
         },
         {
           "id": "year",
@@ -62,7 +49,11 @@
           "min": 2000,
           "max": 2030,
           "placeholder": "2024",
-          "helpText": "Año de realización del proyecto"
+          "helpText": "Año de realización del proyecto",
+          "validation": {
+            "min": null,
+            "max": null
+          }
         },
         {
           "id": "image",
@@ -100,11 +91,204 @@
           "id": "featured",
           "name": "featured",
           "label": "Destacado",
-          "type": "boolean",
+          "type": "textarea",
           "required": false,
           "searchable": false,
           "default": false,
-          "helpText": "Marcar como proyecto destacado en la portada"
+          "helpText": "Marcar como proyecto destacado en la portada",
+          "validation": {
+            "maxLength": null
+          }
+        }
+      ]
+    },
+    {
+      "id": "nosotros",
+      "name": "Sobre Nosotros",
+      "slug": "nosotros",
+      "icon": "FaUsers",
+      "description": "Secciones configurables sobre la empresa - Quiénes somos, Misión, Visión, etc.",
+      "itemsFile": "items/nosotros.json",
+      "searchWeight": 1.2,
+      "displayOrder": 2,
+      "fields": [
+        {
+          "id": "seccion",
+          "name": "seccion",
+          "label": "Tipo de Sección",
+          "type": "select",
+          "required": true,
+          "searchable": true,
+          "options": [
+            "Quiénes Somos",
+            "Misión",
+            "Visión",
+            "Historia",
+            "Valores",
+            "Equipo",
+            "Reconocimientos",
+            "Ubicación",
+            "Contacto",
+            "Filosofía",
+            "Cultura Empresarial",
+            "Responsabilidad Social",
+            "Otra"
+          ],
+          "placeholder": "Selecciona el tipo de sección",
+          "helpText": "Elige qué tipo de información representa esta sección",
+          "validation": {
+            "options": ""
+          }
+        },
+        {
+          "id": "titulo",
+          "name": "titulo",
+          "label": "Título de la Sección",
+          "type": "text",
+          "required": true,
+          "searchable": true,
+          "maxLength": 100,
+          "placeholder": "Ej: Quiénes Somos, Nuestra Misión, etc.",
+          "helpText": "Título que aparecerá como encabezado de la sección",
+          "validation": {
+            "maxLength": null
+          }
+        },
+        {
+          "id": "subtitulo",
+          "name": "subtitulo",
+          "label": "Subtítulo (Opcional)",
+          "type": "text",
+          "required": false,
+          "searchable": true,
+          "maxLength": 150,
+          "placeholder": "Ej: Construyendo el futuro con tecnología",
+          "helpText": "Subtítulo complementario al título principal",
+          "validation": {
+            "maxLength": null
+          }
+        },
+        {
+          "id": "contenido_principal",
+          "name": "contenido_principal",
+          "label": "Contenido Principal",
+          "type": "richtext",
+          "required": true,
+          "searchable": true,
+          "rows": 8,
+          "placeholder": "Escribe el contenido principal de esta sección...",
+          "helpText": "Texto principal que describe esta sección. Acepta HTML básico."
+        },
+        {
+          "id": "contenido_secundario",
+          "name": "contenido_secundario",
+          "label": "Contenido Secundario (Opcional)",
+          "type": "textarea",
+          "required": false,
+          "searchable": true,
+          "rows": 4,
+          "placeholder": "Información adicional, datos complementarios...",
+          "helpText": "Contenido adicional que complementa el texto principal",
+          "validation": {
+            "maxLength": null
+          }
+        },
+        {
+          "id": "imagen_principal",
+          "name": "imagen_principal",
+          "label": "Imagen Principal",
+          "type": "image",
+          "required": false,
+          "searchable": false,
+          "accept": "image/*",
+          "maxSize": 5242880,
+          "helpText": "Imagen representativa de la sección (máx 5MB)"
+        },
+        {
+          "id": "galeria_imagenes",
+          "name": "galeria_imagenes",
+          "label": "Galería de Imágenes (URLs)",
+          "type": "textarea",
+          "required": false,
+          "searchable": false,
+          "rows": 3,
+          "placeholder": "https://imagen1.jpg\nhttps://imagen2.jpg\nhttps://imagen3.jpg",
+          "helpText": "URLs de imágenes adicionales, una por línea",
+          "validation": {
+            "maxLength": null
+          }
+        },
+        {
+          "id": "video_youtube",
+          "name": "video_youtube",
+          "label": "Video de YouTube",
+          "type": "url",
+          "required": false,
+          "searchable": false,
+          "placeholder": "https://www.youtube.com/watch?v=XXXXXXX",
+          "helpText": "URL completa del video de YouTube"
+        },
+        {
+          "id": "enlace_externo",
+          "name": "enlace_externo",
+          "label": "Enlace Externo (Opcional)",
+          "type": "url",
+          "required": false,
+          "searchable": false,
+          "placeholder": "https://sitio-externo.com",
+          "helpText": "Link a sitio web relacionado, redes sociales, etc."
+        },
+        {
+          "id": "texto_enlace",
+          "name": "texto_enlace",
+          "label": "Texto del Enlace",
+          "type": "text",
+          "required": false,
+          "searchable": false,
+          "maxLength": 50,
+          "placeholder": "Ej: Ver más, Conoce más, Visitar sitio",
+          "helpText": "Texto que aparecerá en el enlace externo",
+          "validation": {
+            "maxLength": null
+          }
+        },
+        {
+          "id": "datos_contacto",
+          "name": "datos_contacto",
+          "label": "Datos de Contacto (JSON)",
+          "type": "json",
+          "required": false,
+          "searchable": false,
+          "placeholder": "{\"telefono\": \"+56 9 1234 5678\", \"email\": \"info@empresa.com\", \"direccion\": \"Calle 123, Ciudad\"}",
+          "helpText": "Información de contacto en formato JSON para secciones como Ubicación o Contacto"
+        },
+        {
+          "id": "orden_visualizacion",
+          "name": "orden_visualizacion",
+          "label": "Orden de Visualización",
+          "type": "number",
+          "required": false,
+          "searchable": false,
+          "min": 1,
+          "max": 100,
+          "placeholder": "1",
+          "default": 1,
+          "helpText": "Orden en que aparecerá esta sección (1 = primero)",
+          "validation": {
+            "min": null,
+            "max": null
+          }
+        },
+        {
+          "id": "keywords",
+          "name": "keywords",
+          "label": "Palabras Clave",
+          "type": "tags",
+          "required": false,
+          "searchable": true,
+          "maxTags": 15,
+          "placeholder": "Presiona Enter para agregar",
+          "helpText": "Tags para mejorar la búsqueda (ej: empresa, historia, valores, equipo)"
         }
       ]
     }

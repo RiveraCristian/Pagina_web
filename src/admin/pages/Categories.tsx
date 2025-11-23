@@ -9,12 +9,35 @@ export default function Categories() {
   const queryClient = useQueryClient();
 
   // Cargar categorías
-  const { data: categories = [], isLoading } = useQuery({
+  const { data: categories = [], isLoading, error } = useQuery({
     queryKey: ['categories'],
     queryFn: async () => {
-      const data = await FileManager.readCategories();
-      // Asegurar que siempre retornamos un array
-      return Array.isArray(data?.categories) ? data.categories : [];
+      try {
+        console.log('🔄 Loading categories...');
+        const data = await FileManager.readCategories();
+        console.log('📦 Raw categories data:', data);
+        
+        if (!data) {
+          console.error('❌ No data received from FileManager');
+          return [];
+        }
+        
+        if (!data.categories) {
+          console.error('❌ No categories property in data:', data);
+          return [];
+        }
+        
+        if (!Array.isArray(data.categories)) {
+          console.error('❌ Categories is not an array:', typeof data.categories, data.categories);
+          return [];
+        }
+        
+        console.log('✅ Categories loaded successfully:', data.categories.length, 'categories');
+        return data.categories;
+      } catch (error) {
+        console.error('❌ Error loading categories:', error);
+        throw error;
+      }
     },
   });
 
@@ -71,17 +94,27 @@ export default function Categories() {
         </Link>
       </div>
 
-      {!Array.isArray(categories) || categories.length === 0 ? (
+      {error && (
+        <div className="error-state">
+          <p style={{ color: 'red' }}>Error cargando categorías: {error.message}</p>
+          <p style={{ fontSize: '0.9em', color: '#666' }}>Revisa la consola para más detalles</p>
+        </div>
+      )}
+
+      {!error && (!Array.isArray(categories) || categories.length === 0) ? (
         <div className="empty-state">
           <FaFolder />
           <h3>No hay categorías</h3>
           <p>Crea tu primera categoría para comenzar a organizar contenido</p>
+          <div style={{ fontSize: '0.8em', color: '#666', marginTop: '10px' }}>
+            Debugging: categories = {JSON.stringify(categories, null, 2)}
+          </div>
           <Link to="/admin/categories/new" className="admin-button primary">
             <FaPlus />
             Crear Primera Categoría
           </Link>
         </div>
-      ) : (
+      ) : error ? null : (
         <div className="categories-grid">
           {categories.map((category) => (
             <div key={category.id} className="category-card">

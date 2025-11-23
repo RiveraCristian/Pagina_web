@@ -111,8 +111,13 @@ export class FileManager {
     if (isDev) {
       try {
         const response = await fetch(`${API_BASE}/categories`);
-        if (!response.ok) throw new Error('Failed to fetch categories');
-        return response.json();
+        if (!response.ok) {
+          console.warn(`Categories API returned ${response.status}, using static import`);
+          return categoriesData as CategoriesConfig;
+        }
+        const data = await response.json();
+        console.log('✅ Categories loaded from API:', data.categories?.length || 0, 'categories');
+        return data;
       } catch (error) {
         console.warn('Failed to fetch categories from API, using static import:', error);
         return categoriesData as CategoriesConfig;
@@ -144,8 +149,17 @@ export class FileManager {
    * Obtener una categoría específica por ID
    */
   static async getCategory(categoryId: string): Promise<Category | null> {
-    const categories = await this.readCategories();
-    return categories.categories.find((c: Category) => c.id === categoryId) || null;
+    try {
+      const categories = await this.readCategories();
+      if (!categories || !Array.isArray(categories.categories)) {
+        console.error('Invalid categories structure:', categories);
+        return null;
+      }
+      return categories.categories.find((c: Category) => c.id === categoryId) || null;
+    } catch (error) {
+      console.error('Error getting category:', error);
+      return null;
+    }
   }
 
   // ==================== ITEMS ====================
@@ -190,6 +204,10 @@ export class FileManager {
       throw new Error('Cannot save items in production mode');
     }
 
+    console.log(`🔄 FileManager.saveItems called for category: ${categoryId}`);
+    console.log(`📊 Number of items to save: ${items.length}`);
+    console.log(`📋 Items preview:`, items.map(item => ({ id: item.id, title: item.data?.title || item.data?.titulo || 'No title' })));
+
     const data: ItemsCollection = { items };
 
     const response = await fetch(`${API_BASE}/save-items/${categoryId}`, {
@@ -198,9 +216,16 @@ export class FileManager {
       body: JSON.stringify(data, null, 2),
     });
 
+    console.log(`📡 API Response status: ${response.status}`);
+
     if (!response.ok) {
-      throw new Error(`Failed to save items for ${categoryId}`);
+      const errorText = await response.text();
+      console.error(`❌ API Error:`, errorText);
+      throw new Error(`Failed to save items for ${categoryId}: ${response.status}`);
     }
+
+    const result = await response.json();
+    console.log(`✅ FileManager.saveItems completed:`, result);
   }
 
   /**
@@ -215,7 +240,11 @@ export class FileManager {
    * Crear un nuevo item
    */
   static async createItem(categoryId: string, itemData: Omit<Item, 'id' | 'createdAt' | 'updatedAt'>): Promise<Item> {
+    console.log(`🆕 Creating new item for category: ${categoryId}`);
+    console.log(`📝 Item data:`, itemData);
+    
     const items = await this.readItems(categoryId);
+    console.log(`📊 Current items count: ${items.length}`);
 
     const newItem: Item = {
       ...itemData,
@@ -224,8 +253,12 @@ export class FileManager {
       updatedAt: new Date().toISOString(),
     };
 
+    console.log(`🔑 Generated item ID: ${newItem.id}`);
     items.push(newItem);
+    console.log(`📈 New items count: ${items.length}`);
+    
     await this.saveItems(categoryId, items);
+    console.log(`✅ Item created successfully: ${newItem.id}`);
 
     return newItem;
   }
@@ -234,13 +267,20 @@ export class FileManager {
    * Actualizar un item existente
    */
   static async updateItem(categoryId: string, itemId: string, updates: Partial<Item>): Promise<Item> {
+    console.log(`📝 Updating item ${itemId} in category: ${categoryId}`);
+    console.log(`🔄 Updates:`, updates);
+    
     const items = await this.readItems(categoryId);
+    console.log(`📊 Current items count: ${items.length}`);
+    
     const index = items.findIndex((item) => item.id === itemId);
 
     if (index === -1) {
+      console.error(`❌ Item ${itemId} not found in category ${categoryId}`);
       throw new Error(`Item ${itemId} not found in category ${categoryId}`);
     }
 
+    console.log(`📍 Found item at index: ${index}`);
     const updatedItem: Item = {
       ...items[index],
       ...updates,
@@ -249,6 +289,7 @@ export class FileManager {
 
     items[index] = updatedItem;
     await this.saveItems(categoryId, items);
+    console.log(`✅ Item updated successfully: ${itemId}`);
 
     return updatedItem;
   }

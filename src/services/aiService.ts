@@ -48,10 +48,42 @@ class AIService {
     this.config = config;
     this.knowledgeBase = knowledgeBase;
     
+    console.log(`🤖 AI Service initializing with ${knowledgeBase.length} items...`);
+    
+    // Debug: mostrar items que se van a indexar
+    knowledgeBase.forEach((item, idx) => {
+      const data = item.data || item;
+      console.log(`  Indexing ${idx}: categoryId=${item.categoryId}, status=${item.status}, titulo=${data.titulo || 'N/A'}`);
+    });
+    
     // Indexar contenido para búsqueda local
+    console.log(`🔄 About to index ${knowledgeBase.length} items:`);
+    knowledgeBase.forEach((item, i) => {
+      console.log(`  ${i}: ${JSON.stringify({ categoryId: item.categoryId, status: item.status, hasData: !!item.data })}`);
+    });
+    
     searchEngine.indexContent(knowledgeBase);
     
-    console.log('🤖 AI Service initialized');
+    // Verificar que se indexó correctamente
+    const indexSize = searchEngine.getIndexSize();
+    console.log(`🤖 AI Service initialized - SearchEngine index size: ${indexSize}`);
+    
+    // Test inmediato de búsqueda
+    setTimeout(() => {
+      console.log(`🧪 IMMEDIATE SEARCH TEST:`);
+      const testResult = searchEngine.search('nosotros', { limit: 3, threshold: 0.0 });
+      console.log(`  - 'nosotros': ${testResult.length} results`);
+      if (testResult.length > 0) {
+        console.log(`  ✅ SearchEngine working! First result:`, testResult[0]);
+      } else {
+        console.log(`  ❌ SearchEngine not finding 'nosotros'`);
+        console.log(`  Debug info:`, searchEngine.debugIndex());
+      }
+    }, 500);
+    
+    if (indexSize === 0) {
+      console.error(`❌ WARNING: SearchEngine index is empty! This means content was not indexed properly.`);
+    }
   }
 
   /**
@@ -262,14 +294,30 @@ class AIService {
     
     topResults.forEach((result) => {
       const content = result.content;
-      if (content.nombre || content.titulo || content.title) {
-        response += `• **${content.nombre || content.titulo || content.title}**\n`;
+      
+      // Manejar estructura de items con data anidada
+      const data = content.data || content;
+      
+      // Extraer título
+      const title = data.titulo || data.title || data.nombre || data.name || data.seccion;
+      if (title) {
+        response += `• **${title}**\n`;
       }
-      if (content.descripcion || content.description) {
-        response += `  ${content.descripcion || content.description}\n`;
+      
+      // Extraer descripción/contenido
+      const description = data.contenido_principal || data.descripcion || data.description || 
+                         data.contenido || data.content || data.subtitulo;
+      if (description) {
+        // Limitar descripción a 200 caracteres
+        const shortDesc = description.length > 200 ? 
+          description.substring(0, 200) + '...' : description;
+        response += `  ${shortDesc}\n`;
       }
-      if (content.enlace || content.url) {
-        response += `  [Más información](${content.enlace || content.url})\n`;
+      
+      // Extraer enlace
+      const link = data.enlace_externo || data.enlace || data.url || data.link;
+      if (link && link !== '') {
+        response += `  [${data.texto_enlace || 'Más información'}](${link})\n`;
       }
       response += '\n';
     });

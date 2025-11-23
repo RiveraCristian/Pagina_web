@@ -76,13 +76,41 @@ class SearchEngine {
    */
   indexContent(content: any[]) {
     const startTime = Date.now();
-    this.contentArray = content;
+    
+    console.log(`🔍 SearchEngine.indexContent called with ${content.length} items`);
+    
+    // Debug: mostrar todos los items recibidos
+    content.forEach((item, idx) => {
+      console.log(`  Raw item ${idx}:`, {
+        categoryId: item.categoryId,
+        status: item.status,
+        hasData: !!item.data,
+        keys: Object.keys(item)
+      });
+    });
+    
+    // Filtrar solo contenido publicado
+    const publishedContent = content.filter(item => {
+      // Si el item tiene status, debe ser "published"
+      if (item.status) {
+        const isPublished = item.status === 'published';
+        console.log(`  Item ${item.categoryId || 'unknown'}: status='${item.status}' -> ${isPublished ? 'INCLUDE' : 'EXCLUDE'}`);
+        return isPublished;
+      }
+      // Si no tiene status, asumimos que está publicado (legacy)
+      console.log(`  Item ${item.categoryId || 'unknown'}: no status -> INCLUDE (legacy)`);
+      return true;
+    });
+    
+    console.log(`🔍 After filtering: ${publishedContent.length}/${content.length} items will be indexed`);
+    
+    this.contentArray = publishedContent;
     this.index.clear();
     this.categoryIndex.clear();
     this.dateIndex.clear();
     this.popularityScores.clear();
 
-    content.forEach((item, index) => {
+    publishedContent.forEach((item, index) => {
       // Crear texto indexable combinando todos los campos relevantes
       const searchableText = this.extractSearchableText(item);
       
@@ -123,8 +151,26 @@ class SearchEngine {
     });
 
     const indexTime = Date.now() - startTime;
-    console.log(`🔍 Enhanced indexing completed:`);
-    console.log(`   - ${content.length} items indexed`);
+    console.log(`🔍 Search index ready: ${publishedContent.length} items indexed in ${indexTime}ms`);
+    
+    // Debug: mostrar qué se indexó
+    if (publishedContent.length > 0) {
+      publishedContent.forEach((item, idx) => {
+        const data = item.data || item;
+        const title = data.titulo || data.title || data.nombre || data.name || `Item ${idx}`;
+        console.log(`   - ${title} (${item.status || 'no-status'})`);
+        
+        // Debug detallado para items de nosotros
+        if (item.categoryId === 'nosotros' || data.seccion) {
+          console.log(`     🔍 Nosotros item details:`, {
+            categoryId: item.categoryId,
+            status: item.status,
+            data: data,
+            searchableText: this.extractSearchableText(item).substring(0, 100) + '...'
+          });
+        }
+      });
+    }
     console.log(`   - ${this.index.size} unique tokens`);
     console.log(`   - ${this.categoryIndex.size} categories`);
     console.log(`   - ${indexTime}ms indexing time`);
@@ -182,9 +228,21 @@ class SearchEngine {
 
     if (!query.trim()) return [];
 
+    // Debug para consultas que contienen "nosotros"
+    if (query.toLowerCase().includes('nosotros')) {
+      console.log(`🔍 SEARCH DEBUG para "${query}":`);
+    }
+
     // Normalizar consulta
     const normalizedQuery = this.normalizeText(query);
     const queryTokens = this.tokenize(normalizedQuery);
+    
+    // Debug específico para nosotros
+    if (query.toLowerCase().includes('nosotros')) {
+      console.log(`  - Query original: "${query}"`);
+      console.log(`  - Query normalizada: "${normalizedQuery}"`);
+      console.log(`  - Query tokens:`, queryTokens);
+    }
     
     // Encontrar candidatos
     const candidates = this.findCandidates(queryTokens, fuzzy);
@@ -241,7 +299,10 @@ class SearchEngine {
   private extractSearchableText(item: any): string {
     const fields = ['nombre', 'titulo', 'title', 'name', 'descripcion', 'description', 
                    'contenido', 'content', 'tecnologias', 'technologies', 'categoria', 
-                   'category', 'tags', 'palabrasClave', 'keywords'];
+                   'category', 'tags', 'palabrasClave', 'keywords',
+                   // Campos específicos de la categoría "nosotros"
+                   'seccion', 'subtitulo', 'contenido_principal', 'contenido_secundario',
+                   'texto_enlace', 'datos_contacto'];
     
     let text = '';
     
@@ -267,12 +328,27 @@ class SearchEngine {
    * Tokenizar y limpiar texto
    */
   private tokenize(text: string): string[] {
-    return text
+    const tokens = text
       .toLowerCase()
       .replace(/[^\w\sñáéíóúü]/g, ' ')
       .split(/\s+/)
-      .filter(token => token.length > 2 && !this.stopWords.has(token))
+      .filter(token => {
+        const isValid = token.length > 2 && !this.stopWords.has(token);
+        // Debug específico para "nosotros"
+        if (token.includes('nosotros') || token === 'nosotros') {
+          console.log(`🔍 Token "nosotros" debug: "${token}" -> length: ${token.length}, isStopWord: ${this.stopWords.has(token)}, isValid: ${isValid}`);
+        }
+        return isValid;
+      })
       .map(token => this.normalizeText(token));
+    
+    // Debug: mostrar tokens finales si contienen "nosotros"
+    const nosotrosTokens = tokens.filter(t => t.includes('nosotros'));
+    if (nosotrosTokens.length > 0) {
+      console.log(`🎯 Tokens finales que contienen "nosotros":`, nosotrosTokens);
+    }
+    
+    return tokens;
   }
 
   /**
@@ -435,11 +511,70 @@ class SearchEngine {
   }
 
   /**
+   * Método de debug para verificar el estado del índice
+   */
+  debugIndex(): any {
+    return {
+      contentCount: this.contentArray.length,
+      tokenCount: this.index.size,
+      categoryCount: this.categoryIndex.size,
+      sampleContent: this.contentArray.slice(0, 3).map(item => ({
+        categoryId: item.categoryId,
+        status: item.status,
+        titulo: (item.data || item).titulo || (item.data || item).title || 'N/A',
+        hasData: !!item.data
+      })),
+      sampleTokens: Array.from(this.index.keys()).slice(0, 10)
+    };
+  }
+
+  /**
+   * Forzar reindexación con nuevo contenido
+   */
+  async forceReindex() {
+    console.log('🔄 SearchEngine: Forcing reindex...');
+    
+    // Limpiar índice actual
+    this.clear();
+    
+    // Recargar datos desde API
+    try {
+      const categoriesResponse = await fetch('/api/categories');
+      const categoriesData = await categoriesResponse.json();
+      
+      let newContent: any[] = [];
+      
+      for (const category of categoriesData.categories) {
+        try {
+          const itemsResponse = await fetch(`/api/items/${category.id}?t=${Date.now()}`); // Cache bust
+          const categoryItems = await itemsResponse.json();
+          const items = categoryItems.items || [];
+          newContent.push(...items);
+          console.log(`🔄 Reloaded ${category.id}: ${items.length} items`);
+        } catch (error) {
+          console.warn(`⚠️ Could not reload category ${category.id}:`, error);
+        }
+      }
+      
+      console.log(`🔄 Reindexing ${newContent.length} total items...`);
+      this.indexContent(newContent);
+      
+      return newContent.length;
+    } catch (error) {
+      console.error('❌ Force reindex failed:', error);
+      throw error;
+    }
+  }
+
+  /**
    * Limpiar índice
    */
   clear() {
     this.index.clear();
     this.contentArray = [];
+    this.categoryIndex.clear();
+    this.dateIndex.clear();
+    this.popularityScores.clear();
   }
 
   /**
@@ -447,7 +582,7 @@ class SearchEngine {
    */
   getFacets(query: string = ''): Record<string, Array<{ value: string; count: number }>> {
     const results = query ? this.search(query, { limit: 1000 }) : 
-                   this.contentArray.map((content, index) => ({ content, score: 1, relevance: 1, matches: [] }));
+                   this.contentArray.map((content, _index) => ({ content, score: 1, relevance: 1, matches: [] }));
     
     const facets: Record<string, Map<string, number>> = {
       categories: new Map(),
@@ -624,7 +759,7 @@ class SearchEngine {
   /**
    * Obtener tendencias de búsqueda
    */
-  getTrends(timeframe: 'day' | 'week' | 'month' = 'week'): Array<{ term: string; frequency: number; growth: number }> {
+  getTrends(_timeframe: 'day' | 'week' | 'month' = 'week'): Array<{ term: string; frequency: number; growth: number }> {
     // Por ahora retorna términos más comunes del índice
     const termFrequencies = new Map<string, number>();
     
@@ -646,3 +781,22 @@ class SearchEngine {
 }
 
 export const searchEngine = new SearchEngine();
+
+// Debugging global
+(window as any).debugSearchEngine = () => {
+  console.log('🔍 SEARCH ENGINE DEBUG:');
+  console.log('- Index size:', searchEngine.getIndexSize());
+  console.log('- Content count:', (searchEngine as any).contentArray?.length || 0);
+  
+  if ((searchEngine as any).debugIndex) {
+    console.log('- Debug info:', (searchEngine as any).debugIndex());
+  }
+  
+  // Test búsqueda nosotros
+  const nosotrosResults = searchEngine.search('nosotros', { limit: 5, threshold: 0.0 });
+  console.log('- Búsqueda "nosotros":', nosotrosResults.length, 'resultados');
+  
+  nosotrosResults.forEach((r, i) => {
+    console.log(`  ${i+1}. Score: ${r.score} - Content:`, r.content);
+  });
+};

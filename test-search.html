@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test de Búsqueda</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #1a1a1a;
+            color: white;
+        }
+        .container {
+            background: #2a2a2a;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        button {
+            background: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #45a049;
+        }
+        .log {
+            background: #1e1e1e;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: monospace;
+            font-size: 12px;
+            white-space: pre-wrap;
+            max-height: 400px;
+            overflow-y: auto;
+            margin-top: 10px;
+        }
+        .input-group {
+            margin-bottom: 15px;
+        }
+        input[type="text"] {
+            width: 300px;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #555;
+            border-radius: 5px;
+            background: #333;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <h1>Test de Búsqueda - Debug</h1>
+    
+    <div class="container">
+        <h3>1. Verificar APIs</h3>
+        <button onclick="testAPI()">Probar API /api/items/nosotros</button>
+        <button onclick="checkWindow()">Verificar window.searchEngine</button>
+        <button onclick="checkAI()">Verificar window.aiService</button>
+    </div>
+
+    <div class="container">
+        <h3>2. Test de Búsqueda Directa</h3>
+        <div class="input-group">
+            <input type="text" id="searchQuery" placeholder="Ingresa tu búsqueda..." value="quienes son">
+            <button onclick="testSearch()">Buscar</button>
+        </div>
+        <button onclick="testSearchEngine()">Test searchEngine directo</button>
+        <button onclick="testAIService()">Test aiService directo</button>
+    </div>
+
+    <div class="container">
+        <h3>3. Test de Escena Completa</h3>
+        <button onclick="testSceneService()">Test getSceneForQuery</button>
+    </div>
+
+    <div id="log" class="log">Logs aparecerán aquí...\n</div>
+
+    <script>
+        const logContainer = document.getElementById('log');
+        
+        function log(message) {
+            const timestamp = new Date().toLocaleTimeString();
+            logContainer.textContent += `[${timestamp}] ${message}\n`;
+            logContainer.scrollTop = logContainer.scrollHeight;
+            console.log(message);
+        }
+
+        async function testAPI() {
+            log('📡 Probando API /api/items/nosotros...');
+            try {
+                const response = await fetch('/api/items/nosotros');
+                const data = await response.json();
+                log(`✅ API Response: ${JSON.stringify(data, null, 2)}`);
+            } catch (error) {
+                log(`❌ API Error: ${error.message}`);
+            }
+        }
+
+        function checkWindow() {
+            log('🔍 Verificando window.searchEngine...');
+            if (window.searchEngine) {
+                log('✅ window.searchEngine existe');
+                log(`📊 Index size: ${window.searchEngine.getIndexSize()}`);
+                
+                // Probar búsqueda directa
+                try {
+                    const results = window.searchEngine.search('nosotros', { limit: 3 });
+                    log(`🎯 Resultados de búsqueda directa: ${results.length} items`);
+                    results.forEach((result, i) => {
+                        log(`  ${i+1}. Score: ${result.score}, Content: ${JSON.stringify(result.content).substring(0, 100)}...`);
+                    });
+                } catch (error) {
+                    log(`❌ Error en searchEngine: ${error.message}`);
+                }
+            } else {
+                log('❌ window.searchEngine no existe');
+            }
+        }
+
+        function checkAI() {
+            log('🤖 Verificando window.aiService...');
+            if (window.aiService) {
+                log('✅ window.aiService existe');
+                try {
+                    const stats = window.aiService.getStats();
+                    log(`📊 AI Stats: ${JSON.stringify(stats, null, 2)}`);
+                } catch (error) {
+                    log(`❌ Error obteniendo stats: ${error.message}`);
+                }
+            } else {
+                log('❌ window.aiService no existe');
+            }
+        }
+
+        async function testSearch() {
+            const query = document.getElementById('searchQuery').value;
+            log(`🔍 Probando búsqueda: "${query}"`);
+            
+            if (window.searchEngine) {
+                try {
+                    const results = window.searchEngine.search(query, { limit: 5, threshold: 0.1 });
+                    log(`🎯 SearchEngine encontró ${results.length} resultados`);
+                    results.forEach((result, i) => {
+                        const content = result.content;
+                        const data = content.data || content;
+                        log(`  ${i+1}. Score: ${result.score.toFixed(3)}`);
+                        log(`      Título: ${data.titulo || data.name || 'Sin título'}`);
+                        log(`      Contenido: ${(data.contenido_principal || data.descripcion || 'Sin contenido').substring(0, 100)}...`);
+                    });
+                } catch (error) {
+                    log(`❌ Error en búsqueda: ${error.message}`);
+                }
+            } else {
+                log('❌ SearchEngine no disponible');
+            }
+        }
+
+        async function testSearchEngine() {
+            log('🔍 Test directo de searchEngine...');
+            if (window.searchEngine) {
+                try {
+                    const results = window.searchEngine.search('colabi empresa nosotros', { limit: 10, threshold: 0.0 });
+                    log(`📊 Todos los resultados (${results.length}):`);
+                    results.forEach((result, i) => {
+                        log(`  ${i+1}. Score: ${result.score.toFixed(3)} - ${JSON.stringify(result.content).substring(0, 200)}...`);
+                    });
+                } catch (error) {
+                    log(`❌ Error: ${error.message}`);
+                }
+            }
+        }
+
+        async function testAIService() {
+            const query = document.getElementById('searchQuery').value;
+            log(`🤖 Test directo de aiService: "${query}"`);
+            
+            if (window.aiService) {
+                try {
+                    const response = await window.aiService.processQuery(query);
+                    log(`📋 AI Response:`);
+                    log(`  Source: ${response.source}`);
+                    log(`  Confidence: ${(response.confidence * 100).toFixed(1)}%`);
+                    log(`  Answer: ${response.answer}`);
+                    log(`  Related content: ${response.relatedContent?.length || 0} items`);
+                } catch (error) {
+                    log(`❌ Error: ${error.message}`);
+                }
+            } else {
+                log('❌ aiService no disponible');
+            }
+        }
+
+        async function testSceneService() {
+            const query = document.getElementById('searchQuery').value;
+            log(`🎬 Test completo de getSceneForQuery: "${query}"`);
+            
+            // Necesitamos importar el servicio
+            try {
+                // Esta función debería estar disponible globalmente o la importamos
+                log('⚠️ Necesitamos acceso a getSceneForQuery - verificar en consola del navegador principal');
+            } catch (error) {
+                log(`❌ Error: ${error.message}`);
+            }
+        }
+
+        // Inicialización
+        log('🚀 Test de búsqueda iniciado');
+        log('💡 Abre las DevTools para ver logs adicionales');
+    </script>
+</body>
+</html>
