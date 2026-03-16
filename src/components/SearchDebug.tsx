@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useAI } from '../hooks/useAI';
 
 export function SearchDebug() {
@@ -20,7 +20,7 @@ export function SearchDebug() {
       console.log('🔍 Resultado de búsqueda:', response);
     } catch (err) {
       console.error('❌ Error en búsqueda:', err);
-      setResult({ error: err.message });
+      setResult({ error: (err as Error).message });
     } finally {
       setLoading(false);
     }
@@ -69,7 +69,7 @@ export function SearchDebug() {
                 <div>
                   <strong>Contenido relacionado:</strong>
                   <ul>
-                    {result.relatedContent.map((content, idx) => (
+                    {result.relatedContent.map((content: any, idx: number) => (
                       <li key={idx}>
                         {content.data?.titulo || content.title || 'Sin título'} 
                         (Score: {content.score?.toFixed(2)})

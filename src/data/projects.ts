@@ -1,12 +1,32 @@
 import type { Project } from '../types';
 
 /**
- * ARCHIVO LIMPIO - PROYECTOS AHORA SE GESTIONAN DESDE EL ADMIN PANEL
- * Este archivo se mantiene para compatibilidad pero los datos reales 
- * vienen del sistema de gestión de contenido del admin.
+ * Proyectos del sitio - edita este archivo para agregar, modificar o quitar proyectos.
  */
 export const PROJECTS: Project[] = [
-  // Los proyectos ahora se cargan dinámicamente desde el admin panel
-  // Ver: /admin/items para gestionar contenido
-  // Este array se mantiene vacío para compatibilidad con código legacy
+  {
+    id: "ejemplo_demo_1",
+    categoria: "demo",
+    nombre: "Proyecto de Ejemplo",
+    fraseDefault: "Este es un proyecto de ejemplo",
+    imagenes: ["/img/placeholder.png"],
+    tecnologias: ["React", "TypeScript", "Vite"],
+    links: {
+      demo: "https://ejemplo.com",
+      repositorio: "https://github.com/ejemplo/proyecto"
+    }
+  },
+  {
+    id: "1763743145668-fmoy9ms",
+    categoria: "educacion",
+    nombre: "Ciento-01",
+    fraseDefault: "Programación en papel - Una metodología innovadora para aprender lógica de programación",
+    imagenes: ["/img/ciento01-placeholder.jpg"],
+    tecnologias: ["Pedagogía", "Lógica", "Programación"],
+    links: {
+      demo: "https://ciento01.colabi.tech"
+    },
+    tags: ["Educación", "Programación", "Metodología"],
+    estadisticas: {}
+  }
 ];

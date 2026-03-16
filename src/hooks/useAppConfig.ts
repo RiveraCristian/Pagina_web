@@ -58,12 +58,6 @@ export function useAppConfig() {
             maxResults: 12,
             fuzzySearch: true,
             searchInFields: ['title', 'description']
-          },
-          admin: {
-            enabled: true,
-            path: '/admin',
-            allowJsonEdit: true,
-            allowFileUpload: true
           }
         });
       } finally {

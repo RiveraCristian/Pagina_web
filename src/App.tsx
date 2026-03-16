@@ -29,7 +29,7 @@ function App() {
   const { config } = useAppConfig();
   const { themeConfig } = useThemeConfig();
   const { projects: PROJECTS, loading: projectsLoading } = useProjects();
-  const { isInitialized: aiInitialized, error: aiError } = useAI();
+  const { isInitialized: aiInitialized } = useAI();
   const [promptVisible, setPromptVisible] = useState(false);
   const [scene, setScene] = useState<SceneResponseWithResolvedProjects | null>(null);
   const [loading, setLoading] = useState(false);
