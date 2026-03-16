@@ -117,8 +117,8 @@ class SearchEngine {
         this.addSynonymsToIndex(token, index);
       });
       
-      // Indexar por categoría
-      const category = item.categoria || item.category || 'general';
+      // Indexar por categoría (soporta tanto categoryId como categoria/category)
+      const category = item.categoryId || item.categoria || item.category || 'general';
       if (!this.categoryIndex.has(category)) {
         this.categoryIndex.set(category, new Set());
       }
@@ -288,7 +288,7 @@ class SearchEngine {
   private extractSearchableText(item: any): string {
     const fields = ['nombre', 'titulo', 'title', 'name', 'descripcion', 'description', 
                    'contenido', 'content', 'tecnologias', 'technologies', 'categoria', 
-                   'category', 'tags', 'palabrasClave', 'keywords',
+                   'category', 'categoryId', 'tags', 'palabrasClave', 'keywords',
                    // Campos específicos de la categoría "nosotros"
                    'seccion', 'subtitulo', 'contenido_principal', 'contenido_secundario',
                    'texto_enlace', 'datos_contacto'];
@@ -497,6 +497,22 @@ class SearchEngine {
    */
   getIndexSize(): number {
     return this.index.size;
+  }
+
+  /**
+   * Obtener todos los items indexados de una categoría específica
+   */
+  getByCategory(category: string): any[] {
+    const indices = this.categoryIndex.get(category);
+    if (!indices) return [];
+    return Array.from(indices).map(i => this.contentArray[i]);
+  }
+
+  /**
+   * Obtener todos los items indexados
+   */
+  getAllContent(): any[] {
+    return [...this.contentArray];
   }
 
   /**
