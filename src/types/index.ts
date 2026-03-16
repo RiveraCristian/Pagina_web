@@ -45,6 +45,9 @@ export interface SceneProject {
 export interface SceneResponse {
   titulo: string;
   subtitulo: string;
+  contenido?: string; // Para contenido corporativo
+  enlaces?: Array<{ url: string; texto: string }>; // Enlaces externos
+  contacto?: any; // Información de contacto
   proyectos: SceneProject[];
 }
 

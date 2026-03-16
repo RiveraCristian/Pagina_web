@@ -3,8 +3,8 @@
     "name": "Colabi Spa",
     "shortName": "Colabi",
     "tagline": "Tecnología y Diseño para el Futuro.",
-    "description": "Sitio web con búsqueda por voz e IA completamente configurable desde el admin",
-    "url": "https://mi-sitio.com",
+    "description": "Consultora de desarrollo tecnológico y educación que impulsa la innovación.",
+    "url": "https://colabi.tech",
     "language": "es",
     "timezone": "America/Santiago",
     "logo": {
@@ -28,21 +28,22 @@
   },
   "seo": {
     "title": "Colabi",
-    "description": "Sitio web con búsqueda por voz e IA configurable desde admin",
+    "description": "Colabi - Consultora de desarrollo tecnológico y educación con búsqueda inteligente por voz e IA",
     "keywords": [
-      "búsqueda inteligente",
-      "IA",
-      "búsqueda por voz",
-      "sitio configurable",
-      "CMS"
+      "Colabi",
+      "consultora tecnológica",
+      "desarrollo tecnológico",
+      "educación",
+      "inteligencia artificial",
+      "innovación"
     ],
     "ogImage": "/og-image.jpg",
     "ogImageAlt": "Sitio web con búsqueda inteligente",
     "twitterHandle": "",
     "twitterCard": "summary_large_image",
-    "canonical": "https://mi-sitio.com",
+    "canonical": "https://colabi.tech",
     "robots": "index, follow",
-    "author": "Configurable desde Admin"
+    "author": "Colabi Spa"
   },
   "features": {
     "voiceSearch": true,
@@ -54,7 +55,7 @@
     "analytics": false
   },
   "search": {
-    "placeholder": "Busca contenido, servicios, información...",
+    "placeholder": "Busca proyectos, servicios, información de Colabi...",
     "voiceButtonText": "Buscar con voz",
     "maxResults": 12,
     "fuzzySearch": true,
@@ -72,7 +73,7 @@
   },
   "security": {
     "allowedOrigins": [
-      "https://mi-sitio.com"
+      "https://colabi.tech"
     ],
     "rateLimit": {
       "enabled": true,
