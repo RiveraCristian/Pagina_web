@@ -1,24 +1,6 @@
 {
   "items": [
     {
-      "id": "ejemplo_demo_1",
-      "categoryId": "proyectos",
-      "status": "published",
-      "createdAt": "2025-11-21T00:00:00.000Z",
-      "updatedAt": "2025-11-21T00:00:00.000Z",
-      "data": {
-        "titulo": "Proyecto de Ejemplo",
-        "descripcion": "Este es un proyecto de ejemplo configurable desde el admin",
-        "descripcionLarga": "Descripción detallada del proyecto que puede ser editada desde el panel de administración.",
-        "categoria": "demo",
-        "imagen": "/img/placeholder.png",
-        "enlace": "https://ejemplo.com",
-        "github": "https://github.com/ejemplo/proyecto",
-        "tecnologias": "React, TypeScript, Vite",
-        "destacado": false
-      }
-    },
-    {
       "categoryId": "proyectos",
       "status": "published",
       "data": {
