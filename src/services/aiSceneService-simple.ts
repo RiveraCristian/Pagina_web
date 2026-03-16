@@ -2,7 +2,7 @@
  * Versión simplificada del aiSceneService para debugging
  */
 
-import { aiService } from './aiService';
+
 
 export interface SceneResponse {
   titulo: string;

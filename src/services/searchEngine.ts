@@ -60,17 +60,6 @@ class SearchEngine {
     'educación': ['educativo', 'escuela', 'colegio', 'universidad', 'académico']
   };
   
-  private fieldBoosts = {
-    'nombre': 2.0,
-    'titulo': 2.0,
-    'title': 2.0,
-    'descripcion': 1.5,
-    'description': 1.5,
-    'categoria': 1.3,
-    'tecnologias': 1.2,
-    'keywords': 1.8
-  };
-
   /**
    * Indexar contenido para búsqueda rápida
    */

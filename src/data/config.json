@@ -65,22 +65,6 @@
       "category"
     ]
   },
-  "admin": {
-    "enabled": true,
-    "path": "/admin",
-    "allowJsonEdit": true,
-    "allowFileUpload": true,
-    "maxFileSize": "5MB",
-    "allowedFileTypes": [
-      "jpg",
-      "jpeg",
-      "png",
-      "gif",
-      "webp",
-      "svg"
-    ],
-    "uploadsPath": "/images/uploads"
-  },
   "maintenance": {
     "enabled": false,
     "message": "Sitio en mantenimiento. Vuelve pronto.",
